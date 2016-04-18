@@ -8,7 +8,7 @@ func main() {
 
 	insertToRadix(&radix)
 
-	printRecursive(&radix, 0)
+	fmt.Println(radix.lookUp("/admin/products/:id/view/"))
 }
 
 func insertToRadix(radix *node) {
@@ -22,6 +22,7 @@ func insertToRadix(radix *node) {
 	radix.insert("/user/:name/")
 	radix.insert("/uses/")
 	radix.insert("/admin/products/")
+	radix.insert("/admin/products/:id/view/")
 	radix.insert("/admin/more/")
 	radix.insert("/search/")
 	radix.insert("/support/")

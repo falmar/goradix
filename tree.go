@@ -65,6 +65,41 @@ func (n *node) addChildren(bs []byte, c []*node) {
 	n.children = append(n.children, &node{path: bs, children: c})
 }
 
-func (n *node) lookUp(s string) {
+func (n *node) lookUp(s string) *node {
 
+	var traverseNode = n
+	var matches = 0
+	var bs = []byte(s)
+
+	var i = 0
+	var v byte
+
+	for i, v = range traverseNode.path {
+
+		if i >= len(bs) {
+			break
+		}
+
+		if bs[i] == v && matches == i {
+			matches++
+		} else if bs[i] != v {
+			break
+		}
+
+	}
+
+	if matches == len(traverseNode.path) {
+
+		if matches < len(bs) {
+			for _, c := range traverseNode.children {
+				if tn := c.lookUp(string(bs[i+1:])); tn != nil {
+					return tn
+				}
+			}
+		}
+
+		return traverseNode
+	}
+
+	return nil
 }
