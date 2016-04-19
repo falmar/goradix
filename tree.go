@@ -65,41 +65,78 @@ func (n *node) addChildren(bs []byte, c []*node) {
 	n.children = append(n.children, &node{path: bs, children: c})
 }
 
-func (n *node) lookUp(s string) *node {
+func (n *node) lookUp(s string) (*node, map[string]string) {
 
 	var traverseNode = n
-	var matches = 0
 	var bs = []byte(s)
+	var params = map[string]string{}
 
 	var i = 0
+	var matches = 0
+	var bsiMatches = 0
+	var bsi = -1
 	var v byte
 
-	for i, v = range traverseNode.path {
+	for i = 0; i < len(traverseNode.path); i++ {
+		v = traverseNode.path[i]
+		bsi++
 
-		if i >= len(bs) {
+		if bsi >= len(bs) {
 			break
 		}
 
-		if bs[i] == v && matches == i {
+		if string(v) == ":" {
+			var param = []byte{}
+			var value = []byte{}
+
+			for f := bsi; f < len(bs); f++ {
+				if string(bs[f]) != "/" {
+					bsiMatches++
+					value = append(value, bs[f])
+					continue
+				}
+				bsi += f
+				break
+			}
+
+			for f := i; f < len(traverseNode.path); f++ {
+				if string(traverseNode.path[f]) != "/" {
+					matches++
+					param = append(param, traverseNode.path[f])
+					continue
+				}
+				params[string(param)] = string(value)
+				i += f
+				break
+			}
+
+			v = traverseNode.path[i]
+		}
+
+		if bs[bsi] == v && matches == i {
 			matches++
-		} else if bs[i] != v {
+			bsiMatches++
+		} else if bs[bsi] != v {
 			break
 		}
 
+		continue
 	}
 
 	if matches == len(traverseNode.path) {
-
-		if matches < len(bs) {
+		if bsiMatches < len(bs) {
 			for _, c := range traverseNode.children {
-				if tn := c.lookUp(string(bs[i+1:])); tn != nil {
-					return tn
+				if tn, ps := c.lookUp(string(bs[bsi+1:])); tn != nil {
+					for i, v := range ps {
+						params[i] = v
+					}
+					return tn, params
 				}
 			}
 		}
 
-		return traverseNode
+		return traverseNode, params
 	}
 
-	return nil
+	return nil, nil
 }
