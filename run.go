@@ -8,40 +8,42 @@ func main() {
 
 	insertToRadix(&radix)
 
-	//printRecursive(&radix, 0)
+	node, params := radix.lookUp("ruby")
 
-	node, params := radix.lookUp("/user/someone/")
-
-	fmt.Println(string(node.path), params)
+	if node != nil {
+		fmt.Println(string(node.path), params)
+	} else {
+		fmt.Println("Nothing found.")
+	}
 }
 
 func insertToRadix(radix *node) {
 
 	// HTTP Router:
-	radix.insert("/something/")
-	radix.insert("/user/")
-	radix.insert("/admin/")
-	radix.insert("/admin/auth/")
-	radix.insert("/user/profile/")
-	radix.insert("/user/:name/")
-	radix.insert("/user/:name/view/")
-	radix.insert("/user/:name/likes/")
-	radix.insert("/uses/")
-	radix.insert("/admin/products/")
-	radix.insert("/admin/products/:id/view/")
-	radix.insert("/admin/products/:id/edit/")
-	radix.insert("/admin/more/")
-	radix.insert("/search/")
-	radix.insert("/support/")
+	// radix.insert("/something/")
+	// radix.insert("/user/")
+	// radix.insert("/admin/")
+	// radix.insert("/admin/auth/")
+	// radix.insert("/user/profile/")
+	// radix.insert("/user/:name/")
+	// radix.insert("/user/:name/view/")
+	// radix.insert("/user/:name/likes/")
+	// radix.insert("/uses/")
+	// radix.insert("/admin/products/")
+	// radix.insert("/admin/products/:id/view/")
+	// radix.insert("/admin/products/:id/edit/")
+	// radix.insert("/admin/more/")
+	// radix.insert("/search/")
+	// radix.insert("/support/")
 
 	// Trivial Example 1:
-	//radix.insert("romane")
-	//radix.insert("romanus")
-	//radix.insert("romulus")
-	//radix.insert("rubens")
-	//radix.insert("ruber")
-	//radix.insert("rubicon")
-	//radix.insert("rubicundus")
+	radix.insert("romane")
+	radix.insert("romanus")
+	radix.insert("romulus")
+	radix.insert("rubens")
+	radix.insert("ruber")
+	radix.insert("rubicon")
+	radix.insert("rubicundus")
 
 	// Trivial Example 2:
 	//radix.insert(" ")
