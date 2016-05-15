@@ -154,12 +154,13 @@ func (r *Radix) LookUp(bs []byte) (*Radix, error) {
 
 	if matches == len(traverseNode.Path) {
 		if matches < len(bs) {
-			for _, c := range traverseNode.nodes {
-				if tn, err := c.LookUp(lbs); tn != nil {
+			for _, n := range traverseNode.nodes {
+				if tn, err := n.LookUp(lbs); tn != nil {
 					return tn, err
 				}
 			}
 
+			// Do not jump back to parent node
 			return nil, ErrNoMatchFound
 		}
 

@@ -24,19 +24,18 @@ func main() {
 
 		if err != nil {
 			fmt.Println(err)
-			continue
+		} else {
+			fmt.Println("\nFound Node:", string(node.Path))
 		}
-
-		fmt.Println("Found Node:", string(node.Path))
 
 		fmt.Print("Text to Search: ")
 	}
 }
 
 func exampleData(radix *goradix.Radix) {
-	radix.Insert("test")
-	radix.Insert("toaster")
-	radix.Insert("toasting")
-	radix.Insert("slow")
-	radix.Insert("slowly")
+	text := []string{"test", "toaster", "toasting", "slow", "slowly"}
+	for _, v := range text {
+		fmt.Println("Inserted:", v)
+		radix.Insert(v)
+	}
 }
