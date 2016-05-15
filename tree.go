@@ -6,14 +6,20 @@ import (
 	"fmt"
 )
 
-// ErrNoMatch self explanatory
-const ErrNoMatch = "No Match Found"
+// ErrNoMatchFound self explanatory
+var ErrNoMatchFound = errors.New("No Match Found")
 
 // Radix Radix
 type Radix struct {
 	path   []byte
+	parent *Radix
 	nodes  []*Radix
 	master bool
+}
+
+// New return a Radix Tree
+func New() *Radix {
+	return &Radix{master: true}
 }
 
 // ----------------------- Inserts ------------------------ //
@@ -40,35 +46,38 @@ func (r *Radix) insertByteString(bs []byte) bool {
 			return false
 		}
 
+		if v == bs[i] && match == i {
+			match++
+			continue
+		}
+
 		if v != bs[i] && match > 0 {
 			if r.nodes == nil {
-				r.addChildren(bs[i:], nil)
 				r.addChildren(r.path[i:], nil)
+				r.addChildren(bs[i:], nil)
 				r.path = r.path[:i]
 			} else {
 				r.pushChildren(bs, i, false)
 			}
 
 			return true
-		} else if v == bs[i] && match == i {
-			match++
 		}
 	}
 
 	if match > 0 {
-
 		for _, c := range r.nodes {
 			if c.insertByteString(bs[i+1:]) {
 				return true
 			}
 		}
-
-		// no match found on childrens
+		// no match found on nodes
 		r.addChildren(bs[i+1:], nil)
 
 		return true
 	} else if r.master {
-		if len(r.path) > 0 {
+		// Add independent nodes while the master Radix Tree
+		// path becomes nil
+		if r.path != nil {
 			r.pushChildren(bs, i, true)
 			return true
 		}
@@ -79,6 +88,8 @@ func (r *Radix) insertByteString(bs []byte) bool {
 			}
 		}
 
+		// no match found on nodes
+		// add new node
 		r.addChildren(bs, nil)
 		return true
 	}
@@ -92,7 +103,7 @@ func (r *Radix) pushChildren(bs []byte, i int, master bool) {
 	r.addChildren(r.path[i:], nodes)
 
 	if master {
-		r.path = []byte{}
+		r.path = nil
 		r.addChildren(bs, nil)
 	} else {
 		r.path = r.path[:i]
@@ -101,7 +112,7 @@ func (r *Radix) pushChildren(bs []byte, i int, master bool) {
 }
 
 func (r *Radix) addChildren(bs []byte, c []*Radix) {
-	r.nodes = append(r.nodes, &Radix{path: bs, nodes: c})
+	r.nodes = append(r.nodes, &Radix{path: bs, nodes: c, parent: r})
 }
 
 // ----------------------- Look Up ------------------------ //
@@ -120,13 +131,13 @@ func (r *Radix) LookUp(bs []byte) (*Radix, error) {
 				}
 			}
 
-			return nil, errors.New(ErrNoMatch)
+			return nil, ErrNoMatchFound
 		}
 
 		return traverseNode, nil
 	}
 
-	return nil, errors.New(ErrNoMatch)
+	return nil, ErrNoMatchFound
 }
 
 func (r Radix) match(path, bs []byte) (lbs []byte, matches int) {
@@ -167,7 +178,7 @@ func (r Radix) Autocomplete(s string) (node *Radix, words []string, err error) {
 	fmt.Println(node)
 
 	if node.master && len(bs) > 0 {
-		err = errors.New(ErrNoMatch)
+		err = ErrNoMatchFound
 	}
 
 	wordChan := make(chan []byte)
@@ -195,7 +206,7 @@ func (r Radix) Autocomplete(s string) (node *Radix, words []string, err error) {
 	fmt.Println(len(words))
 
 	if len(words) == 0 {
-		err = errors.New(ErrNoMatch)
+		err = ErrNoMatchFound
 	}
 
 	return
@@ -220,7 +231,7 @@ func (r *Radix) acLookUp(bs []byte) ([]byte, *Radix, error) {
 		return lbs, traverseNode, nil
 	}
 
-	return lbs, nil, errors.New(ErrNoMatch)
+	return lbs, nil, ErrNoMatchFound
 }
 
 func buildWords(rt *Radix, bs, strip []byte, words chan<- []byte) {
