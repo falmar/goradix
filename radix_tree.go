@@ -1,4 +1,4 @@
-package main
+package goradix
 
 import (
 	"bytes"
@@ -11,9 +11,9 @@ var ErrNoMatchFound = errors.New("No Match Found")
 
 // Radix Radix
 type Radix struct {
-	path   []byte
-	parent *Radix
+	Path   []byte
 	nodes  []*Radix
+	parent *Radix
 	master bool
 }
 
@@ -31,8 +31,8 @@ func (r *Radix) Insert(s string) bool {
 
 func (r *Radix) insertByteString(bs []byte) bool {
 
-	if len(r.path) == 0 && len(r.nodes) == 0 {
-		r.path = bs
+	if len(r.Path) == 0 && len(r.nodes) == 0 {
+		r.Path = bs
 		return true
 	}
 
@@ -40,7 +40,7 @@ func (r *Radix) insertByteString(bs []byte) bool {
 	i := 0
 	var v byte
 
-	for i, v = range r.path {
+	for i, v = range r.Path {
 
 		if i >= len(bs) {
 			return false
@@ -53,9 +53,9 @@ func (r *Radix) insertByteString(bs []byte) bool {
 
 		if v != bs[i] && match > 0 {
 			if r.nodes == nil {
-				r.addChildren(r.path[i:], nil)
+				r.addChildren(r.Path[i:], nil)
 				r.addChildren(bs[i:], nil)
-				r.path = r.path[:i]
+				r.Path = r.Path[:i]
 			} else {
 				r.pushChildren(bs, i, false)
 			}
@@ -77,7 +77,7 @@ func (r *Radix) insertByteString(bs []byte) bool {
 	} else if r.master {
 		// Add independent nodes while the master Radix Tree
 		// path becomes nil
-		if r.path != nil {
+		if r.Path != nil {
 			r.pushChildren(bs, i, true)
 			return true
 		}
@@ -100,30 +100,59 @@ func (r *Radix) insertByteString(bs []byte) bool {
 func (r *Radix) pushChildren(bs []byte, i int, master bool) {
 	nodes := r.nodes
 	r.nodes = nil
-	r.addChildren(r.path[i:], nodes)
+	r.addChildren(r.Path[i:], nodes)
 
 	if master {
-		r.path = nil
+		r.Path = nil
 		r.addChildren(bs, nil)
 	} else {
-		r.path = r.path[:i]
+		r.Path = r.Path[:i]
 		r.addChildren(bs[i:], nil)
 	}
 }
 
 func (r *Radix) addChildren(bs []byte, c []*Radix) {
-	r.nodes = append(r.nodes, &Radix{path: bs, nodes: c, parent: r})
+	r.nodes = append(r.nodes, &Radix{Path: bs, nodes: c, parent: r})
+}
+
+// ----------------------- Match ------------------------ //
+
+func (r Radix) match(bs []byte) (lbs []byte, matches int, plbs []byte) {
+	var i = 0
+	var v byte
+
+	for i < len(r.Path) {
+		v = r.Path[i]
+		if i >= len(bs) {
+			break
+		}
+
+		if bs[i] == v && matches == i {
+			matches++
+		} else if bs[i] != v {
+			break
+		}
+		i++
+	}
+
+	lbs = bs[i:]
+	plbs = r.Path[i:]
+
+	return
 }
 
 // ----------------------- Look Up ------------------------ //
+
+// TODO: If first letter do not match, continue
+// TODO: Optimize match function
 
 // LookUp will return the node matching
 func (r *Radix) LookUp(bs []byte) (*Radix, error) {
 	var traverseNode = r
 
-	lbs, matches := r.match(traverseNode.path, bs)
+	lbs, matches, _ := traverseNode.match(bs)
 
-	if matches == len(traverseNode.path) {
+	if matches == len(traverseNode.Path) {
 		if matches < len(bs) {
 			for _, c := range traverseNode.nodes {
 				if tn, err := c.LookUp(lbs); tn != nil {
@@ -138,29 +167,6 @@ func (r *Radix) LookUp(bs []byte) (*Radix, error) {
 	}
 
 	return nil, ErrNoMatchFound
-}
-
-func (r Radix) match(path, bs []byte) (lbs []byte, matches int) {
-	var i = 0
-	var v byte
-
-	for i < len(path) {
-		v = path[i]
-		if i >= len(bs) {
-			break
-		}
-
-		if bs[i] == v && matches == i {
-			matches++
-		} else if bs[i] != v {
-			break
-		}
-		i++
-	}
-
-	lbs = bs[i:]
-
-	return
 }
 
 // ----------------------- Autocomplete ------------------------ //
@@ -190,14 +196,14 @@ func (r Radix) Autocomplete(s string) (node *Radix, words []string, err error) {
 
 	if len(lbs) > 0 {
 		for _, n := range node.nodes {
-			if _, matches := r.match(n.path, lbs); matches > 0 {
+			if _, matches, _ := n.match(lbs); matches > 0 {
 				if matches == len(lbs) {
-					buildWords(n, []byte{}, n.path, wordChan)
+					buildWords(n, []byte{}, n.Path, wordChan)
 				}
 			}
 		}
 	} else {
-		buildWords(node, []byte{}, node.path, wordChan)
+		buildWords(node, []byte{}, node.Path, wordChan)
 	}
 
 	close(wordChan)
@@ -215,11 +221,11 @@ func (r Radix) Autocomplete(s string) (node *Radix, words []string, err error) {
 func (r *Radix) acLookUp(bs []byte) ([]byte, *Radix, error) {
 	var traverseNode = r
 
-	lbs, matches := r.match(traverseNode.path, bs)
+	lbs, matches, _ := traverseNode.match(bs)
 
-	fmt.Println("Look for:", string(bs), "in", string(traverseNode.path), "matches", matches, "turn to", string(lbs))
+	fmt.Println("Look for:", string(bs), "in", string(traverseNode.Path), "matches", matches, "turn to", string(lbs))
 
-	if matches == len(traverseNode.path) {
+	if matches == len(traverseNode.Path) {
 		if matches <= len(lbs) {
 			for _, n := range traverseNode.nodes {
 				if nlbs, tn, err := n.acLookUp(lbs); tn != nil {
@@ -237,7 +243,7 @@ func (r *Radix) acLookUp(bs []byte) ([]byte, *Radix, error) {
 func buildWords(rt *Radix, bs, strip []byte, words chan<- []byte) {
 	var npath []byte
 
-	npath = append(bs, rt.path...)
+	npath = append(bs, rt.Path...)
 
 	if len(rt.nodes) > 0 {
 		for _, n := range rt.nodes {

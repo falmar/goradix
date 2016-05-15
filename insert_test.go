@@ -1,14 +1,6 @@
-package main
+package goradix
 
 import "testing"
-
-func exampleData1(radix *Radix) {
-	radix.Insert("test")
-	radix.Insert("toaster")
-	radix.Insert("toasting")
-	radix.Insert("slow")
-	radix.Insert("slowly")
-}
 
 func TestInsert(t *testing.T) {
 	radix := New()
@@ -16,8 +8,9 @@ func TestInsert(t *testing.T) {
 	radix.Insert("test")
 	bs := []byte("test")
 
-	for i, v := range radix.path {
+	for i, v := range radix.Path {
 		if v != bs[i] {
+			t.Fail()
 			t.Logf("Expected: %d; got: %d", v, bs[i])
 		}
 	}
@@ -27,8 +20,9 @@ func TestInsert(t *testing.T) {
 	radix.Insert("test")
 	bs = []byte("te2t")
 
-	for i, v := range radix.path {
+	for i, v := range radix.Path {
 		if v != bs[i] && i == 3 {
+			t.Fail()
 			t.Logf("Expected: %d; got: %d", v, bs[i])
 		}
 	}
@@ -42,15 +36,17 @@ func TestInsertSeparation(t *testing.T) {
 	masterText := []byte("toast")
 	nodesText := [][]byte{[]byte("er"), []byte("ing")}
 
-	for i, v := range radix.path {
+	for i, v := range radix.Path {
 		if v != masterText[i] {
+			t.Fail()
 			t.Logf("Expected: %d; got: %d", v, masterText[i])
 		}
 	}
 
 	for i, n := range radix.nodes {
-		for ii, v := range n.path {
+		for ii, v := range n.Path {
 			if v != nodesText[i][ii] {
+				t.Fail()
 				t.Logf("Expected: %d; got: %d", v, nodesText[i][ii])
 			}
 		}
@@ -59,7 +55,7 @@ func TestInsertSeparation(t *testing.T) {
 
 func checkNodes(t *testing.T, nodes []*Radix, TextLevels [][]byte, level int) int {
 	for _, n := range nodes {
-		for i, v := range n.path {
+		for i, v := range n.Path {
 			if v != TextLevels[level][i] {
 				t.Fail()
 				t.Logf("Expected: %s; got: %s", string(v), string(TextLevels[level][i]))
@@ -72,7 +68,7 @@ func checkNodes(t *testing.T, nodes []*Radix, TextLevels [][]byte, level int) in
 
 func TestInsertSeparationComplex(t *testing.T) {
 	radix := New()
-	exampleData1(radix)
+	exampleData(radix)
 
 	TextLevels := [][]byte{
 		[]byte("t"),
@@ -84,9 +80,9 @@ func TestInsertSeparationComplex(t *testing.T) {
 		[]byte("ly"),
 	}
 
-	if radix.path != nil {
+	if radix.Path != nil {
 		t.Fail()
-		t.Logf("Expected: %v; got: %v", nil, radix.path)
+		t.Logf("Expected: %v; got: %v", nil, radix.Path)
 	}
 
 	checkNodes(t, radix.nodes, TextLevels, 0)
