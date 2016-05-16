@@ -45,6 +45,5 @@ func TestMatch(t *testing.T) {
 	}
 
 	match(t, []string{"test"}, []byte("tea"), []byte("a"), []byte("st"), 2)
-
 	match(t, []string{"yubel", "yuber", "yubo"}, []byte("y"), []byte{}, []byte("ub"), 1)
 }

@@ -4,64 +4,71 @@ import "testing"
 
 func TestInsert(t *testing.T) {
 	radix := New()
+	radix.Insert("test", 1)
 
-	radix.Insert("test")
-	bs := []byte("test")
+	expectedBytes := []byte("test")
+	expectedValue := 1
 
 	for i, v := range radix.Path {
-		if v != bs[i] {
+		if v != expectedBytes[i] {
 			t.Fail()
-			t.Logf("Expected: %d; got: %d", v, bs[i])
+			t.Logf("Expected: %d; got: %d", v, expectedBytes[i])
 		}
 	}
 
-	radix = New()
-
-	radix.Insert("test")
-	bs = []byte("te2t")
-
-	for i, v := range radix.Path {
-		if v != bs[i] && i == 3 {
-			t.Fail()
-			t.Logf("Expected: %d; got: %d", v, bs[i])
-		}
+	if radix.Get() != expectedValue {
+		t.Fail()
+		t.Logf("Expected value: %v; got: %v", radix.Get(), expectedValue)
 	}
 }
 
 func TestInsertSeparation(t *testing.T) {
 	radix := New()
-	radix.Insert("toaster")
-	radix.Insert("toasting")
+	radix.Insert("toaster", "value1")
+	radix.Insert("toasting", "value2")
 
-	masterText := []byte("toast")
-	nodesText := [][]byte{[]byte("er"), []byte("ing")}
+	expectedText := [][]byte{
+		[]byte("toast"), []byte("er"), []byte("ing"),
+	}
+	expectedValues := []string{"value1", "value2"}
 
 	for i, v := range radix.Path {
-		if v != masterText[i] {
+		if v != expectedText[0][i] {
 			t.Fail()
-			t.Logf("Expected: %d; got: %d", v, masterText[i])
+			t.Logf("Expected: %d; got: %d", v, expectedText[0][i])
 		}
 	}
 
 	for i, n := range radix.nodes {
 		for ii, v := range n.Path {
-			if v != nodesText[i][ii] {
+			if v != expectedText[i+1][ii] {
 				t.Fail()
-				t.Logf("Expected: %d; got: %d", v, nodesText[i][ii])
+				t.Logf("Expected: %d; got: %d", v, expectedText[i+1][ii])
 			}
+		}
+
+		if n.Get() != expectedValues[i] {
+			t.Fail()
+			t.Logf("Expected value: %v; got: %v", n.Get(), expectedValues[i])
 		}
 	}
 }
 
-func checkNodes(t *testing.T, nodes []*Radix, TextLevels [][]byte, level int) int {
+func checkNodes(t *testing.T, nodes []*Radix, expectedText [][]byte, expectedValue []interface{}, level int) int {
 	for _, n := range nodes {
 		for i, v := range n.Path {
-			if v != TextLevels[level][i] {
+			if v != expectedText[level][i] {
 				t.Fail()
-				t.Logf("Expected: %s; got: %s", string(v), string(TextLevels[level][i]))
+				t.Logf("Expected: %s; got: %s", string(expectedText[level][i]), string(v))
 			}
 		}
-		level = checkNodes(t, n.nodes, TextLevels, level+1)
+
+		if n.Get() != expectedValue[level] {
+			t.Fail()
+			t.Logf("Expected value: %v; got: %v", expectedValue[level], n.Get())
+		}
+
+		level = checkNodes(t, n.nodes, expectedText, expectedValue, level+1)
 	}
 	return level
 }
@@ -70,7 +77,7 @@ func TestInsertSeparationComplex(t *testing.T) {
 	radix := New()
 	insertData(radix, sampleData)
 
-	TextLevels := [][]byte{
+	expectedTexts := [][]byte{
 		[]byte("t"),
 		[]byte("est"),
 		[]byte("oast"),
@@ -80,10 +87,14 @@ func TestInsertSeparationComplex(t *testing.T) {
 		[]byte("ly"),
 	}
 
+	expectedValues := []interface{}{
+		nil, 0, nil, 1, 2, 3, 4,
+	}
+
 	if radix.Path != nil {
 		t.Fail()
 		t.Logf("Expected: %v; got: %v", nil, radix.Path)
 	}
 
-	checkNodes(t, radix.nodes, TextLevels, 0)
+	checkNodes(t, radix.nodes, expectedTexts, expectedValues, 0)
 }

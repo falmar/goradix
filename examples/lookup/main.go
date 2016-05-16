@@ -25,7 +25,7 @@ func main() {
 		if err != nil {
 			fmt.Println(err)
 		} else {
-			fmt.Println("\nFound Node:", string(node.Path))
+			fmt.Println("\nFound Node:", string(node.Path), "Value: ", node.Get())
 		}
 
 		fmt.Print("Text to Search: ")
@@ -34,8 +34,8 @@ func main() {
 
 func exampleData(radix *goradix.Radix) {
 	text := []string{"test", "toaster", "toasting", "slow", "slowly"}
-	for _, v := range text {
-		fmt.Println("Inserted:", v)
-		radix.Insert(v)
+	for i, v := range text {
+		fmt.Println("Inserted:", v, "Value: ", i)
+		radix.Insert(v, i)
 	}
 }

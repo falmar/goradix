@@ -43,8 +43,8 @@ func sampleData2() []string {
 }
 
 func insertData(radix *Radix, cb func() []string) {
-	for _, s := range cb() {
-		radix.Insert(s)
+	for i, s := range cb() {
+		radix.Insert(s, i)
 	}
 }
 
