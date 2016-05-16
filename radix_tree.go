@@ -164,7 +164,8 @@ func (r *Radix) LookUp(bs []byte) (*Radix, error) {
 
 	lbs, matches, _ := traverseNode.match(bs)
 
-	if matches == len(traverseNode.Path) && ((!r.master && matches > 0) || r.master) {
+	// && ((!r.master && matches > 0) || r.master)
+	if matches == len(traverseNode.Path) {
 		if matches < len(bs) {
 			for _, n := range traverseNode.nodes {
 				if tn, err := n.LookUp(lbs); tn != nil {
