@@ -68,7 +68,7 @@ func checkNodes(t *testing.T, nodes []*Radix, TextLevels [][]byte, level int) in
 
 func TestInsertSeparationComplex(t *testing.T) {
 	radix := New()
-	exampleData(radix)
+	insertData(radix, sampleData)
 
 	TextLevels := [][]byte{
 		[]byte("t"),

@@ -5,7 +5,7 @@ import "testing"
 func TestLookUp(t *testing.T) {
 	radix := New()
 
-	exampleData(radix)
+	insertData(radix, sampleData)
 
 	checkLookUp := func(toLook, expected string, expectedError error) {
 		node, err := radix.LookUp([]byte(toLook))
@@ -54,4 +54,20 @@ func TestLookUp(t *testing.T) {
 	checkLookUp("toasto", "", ErrNoMatchFound)
 	checkLookUp("tast", "", ErrNoMatchFound)
 	checkLookUp("slowe", "", ErrNoMatchFound)
+}
+
+// ----------------------- Benchmarks ------------------------ //
+
+func BenchmarkLookUp(b *testing.B) {
+	radix := New()
+	insertData(radix, sampleData2)
+
+	for i := 0; i < b.N; i++ {
+		radix.LookUp([]byte("pepocundus"))
+	}
+}
+
+func randomBytes() []byte {
+	strings := sampleData2()
+	return []byte(strings[random(0, len(strings))])
 }

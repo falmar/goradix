@@ -41,22 +41,30 @@ func (r *Radix) insertByteString(bs []byte) bool {
 	var v byte
 
 	for i, v = range r.Path {
-
 		if i >= len(bs) {
+			// No more matchs to check
 			return false
 		}
 
 		if v == bs[i] && match == i {
+			// continue as long it match the path
 			match++
 			continue
 		}
 
 		if v != bs[i] && match > 0 {
+			// If the byte string does not match anymore but had
+			// previous matches to the path then add the byte string
+			// as children node
 			if r.nodes == nil {
+				// If there is no existing nodes then slice the path
+				// until the last occurrence, add what is left of the path as
+				// children and also add the byte string.
 				r.addChildren(r.Path[i:], nil)
 				r.addChildren(bs[i:], nil)
 				r.Path = r.Path[:i]
 			} else {
+				// Otherwise just add the new byte string as
 				r.pushChildren(bs, i, false)
 			}
 
@@ -65,6 +73,7 @@ func (r *Radix) insertByteString(bs []byte) bool {
 	}
 
 	if match > 0 {
+		// If it matches all current node path and the byte string
 		for _, c := range r.nodes {
 			if c.insertByteString(bs[i+1:]) {
 				return true
@@ -74,9 +83,11 @@ func (r *Radix) insertByteString(bs []byte) bool {
 		r.addChildren(bs[i+1:], nil)
 
 		return true
-	} else if r.master {
-		// Add independent nodes while the master Radix Tree
-		// path becomes nil
+	}
+
+	if r.master {
+		// If there is NO match and the current node is the master Radix
+
 		if r.Path != nil {
 			r.pushChildren(bs, i, true)
 			return true
@@ -88,8 +99,8 @@ func (r *Radix) insertByteString(bs []byte) bool {
 			}
 		}
 
-		// no match found on nodes
-		// add new node
+		// no match found on children nodes
+		// add new byte string as node
 		r.addChildren(bs, nil)
 		return true
 	}
@@ -97,6 +108,14 @@ func (r *Radix) insertByteString(bs []byte) bool {
 	return false
 }
 
+// Add children node to the current Radix Tree node
+func (r *Radix) addChildren(bs []byte, c []*Radix) {
+	r.nodes = append(r.nodes, &Radix{Path: bs, nodes: c, parent: r})
+}
+
+// Push the current children nodes to a new node with the path
+// of what is left from slicing of the current path
+// and add the new byte string as children node
 func (r *Radix) pushChildren(bs []byte, i int, master bool) {
 	nodes := r.nodes
 	r.nodes = nil
@@ -111,15 +130,12 @@ func (r *Radix) pushChildren(bs []byte, i int, master bool) {
 	}
 }
 
-func (r *Radix) addChildren(bs []byte, c []*Radix) {
-	r.nodes = append(r.nodes, &Radix{Path: bs, nodes: c, parent: r})
-}
-
 // ----------------------- Match ------------------------ //
 
-func (r Radix) match(bs []byte) (lbs []byte, matches int, plbs []byte) {
-	var i = 0
+func (r Radix) match(bs []byte) ([]byte, int, []byte) {
+	var i int
 	var v byte
+	var matches int
 
 	for i < len(r.Path) {
 		v = r.Path[i]
@@ -135,16 +151,12 @@ func (r Radix) match(bs []byte) (lbs []byte, matches int, plbs []byte) {
 		i++
 	}
 
-	lbs = bs[i:]
-	plbs = r.Path[i:]
-
-	return
+	return bs[i:], matches, r.Path[i:]
 }
 
 // ----------------------- Look Up ------------------------ //
 
 // TODO: If first letter do not match, continue
-// TODO: Optimize match function
 
 // LookUp will return the node matching
 func (r *Radix) LookUp(bs []byte) (*Radix, error) {
@@ -152,7 +164,7 @@ func (r *Radix) LookUp(bs []byte) (*Radix, error) {
 
 	lbs, matches, _ := traverseNode.match(bs)
 
-	if matches == len(traverseNode.Path) {
+	if matches == len(traverseNode.Path) && ((!r.master && matches > 0) || r.master) {
 		if matches < len(bs) {
 			for _, n := range traverseNode.nodes {
 				if tn, err := n.LookUp(lbs); tn != nil {

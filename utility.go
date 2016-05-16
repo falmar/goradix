@@ -1,38 +1,51 @@
 package goradix
 
-import "fmt"
+import (
+	"fmt"
+	"math/rand"
+)
 
-func exampleData(radix *Radix) {
-	radix.Insert("test")
-	radix.Insert("toaster")
-	radix.Insert("toasting")
-	radix.Insert("slow")
-	radix.Insert("slowly")
+func sampleData() []string {
+	return []string{
+		"test",
+		"toaster",
+		"toasting",
+		"slow",
+		"slowly",
+	}
 }
 
-func exampleData2(radix *Radix) {
-	radix.Insert("romane")
-	radix.Insert("romanus")
-	radix.Insert("romulus")
-	radix.Insert("rubens")
-	radix.Insert("ruber")
-	radix.Insert("rubicon")
-	radix.Insert("rubicundus")
-	radix.Insert("rinicundus")
-	radix.Insert("repicundus")
-	radix.Insert("lepicundus")
-	radix.Insert("lepocundus")
-	radix.Insert("lomulus")
-	radix.Insert("lupus")
-	radix.Insert("huber")
-	radix.Insert("pepicundus")
-	radix.Insert("pepicundas")
-	radix.Insert("pepocundus")
-	radix.Insert("pomulus")
-	radix.Insert("pupus")
-	radix.Insert("yuber")
-	radix.Insert("yubel")
-	radix.Insert("yubo")
+func sampleData2() []string {
+	return []string{
+		"romane",
+		"romanus",
+		"romulus",
+		"rubens",
+		"ruber",
+		"rubicon",
+		"rubicundus",
+		"rinicundus",
+		"repicundus",
+		"lepicundus",
+		"lepocundus",
+		"lomulus",
+		"lupus",
+		"huber",
+		"pepicundus",
+		"pepicundas",
+		"pepocundus",
+		"pomulus",
+		"pupus",
+		"yuber",
+		"yubel",
+		"yubo",
+	}
+}
+
+func insertData(radix *Radix, cb func() []string) {
+	for _, s := range cb() {
+		radix.Insert(s)
+	}
 }
 
 func printRecursive(n *Radix, level int) {
@@ -42,4 +55,8 @@ func printRecursive(n *Radix, level int) {
 			printRecursive(c, level+1)
 		}
 	}
+}
+
+func random(min, max int) int {
+	return rand.Intn(max-min) + min
 }
