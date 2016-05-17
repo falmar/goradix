@@ -3,7 +3,7 @@
 Radix Tree implementation written in Golang. **Still under development**
 
 
-## Radix Tree
+#### Radix Tree
 > In computer science, a radix tree (also radix trie or compact prefix tree) is a data structure that represents a space-optimized trie in which each node that is the only child is merged with its parent. - [Wikipedia](https://en.wikipedia.org/wiki/Radix_tree)
 
 ![](https://upload.wikimedia.org/wikipedia/commons/thumb/a/ae/Patricia_trie.svg/400px-Patricia_trie.svg.png)
@@ -25,8 +25,10 @@ Radix Tree implementation written in Golang. **Still under development**
 | AutoComplete |  |  |  |
 
 - Usage Examples:
-    * [ ] Insert
-    * [ ] LookUp
+    * [x] Set
+    * [x] Get
+    * [x] Insert
+    * [x] LookUp
     * [ ] Remove
     * [ ] AutoComplete
 
@@ -35,14 +37,13 @@ Radix Tree implementation written in Golang. **Still under development**
 
 Download: `go get github.com/falmar/goradix`
 
-Import `impot "github.com/falmar/goradix"`
+Import `import "github.com/falmar/goradix"`
 
 ### Set
 ```go
 // Set a value to the Radix Tree node
 func (r *Radix) Set(v interface{}) {...}
 ```
-
 ```go
 package main
 
@@ -58,7 +59,6 @@ func main() {
 // Get a value from Radix Tree node
 func (r *Radix) Get() interface{} {...}
 ```
-
 ```go
 package main
 
@@ -83,7 +83,6 @@ func (r *Radix) Insert(s string, value ...interface{}){...}
 // bs slice of bytes required, value (optional)
 func (r *Radix) InsertBytes(bs []byte, val ...interface{}) bool {...}
 ```
-
 ```go
 package main
 
@@ -111,7 +110,6 @@ func (r *Radix) LookUp(s string) (*Radix, error) {...}
 // bs slice of bytes required
 func (r *Radix) LookUpBytes(bs []byte) (*Radix, error) {...}
 ```
-
 ```go
 package main
 
