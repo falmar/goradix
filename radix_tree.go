@@ -1,3 +1,7 @@
+// Copyright 2016 David Lavieri.  All rights reserved.
+// Use of this source code is governed by a MIT License
+// License that can be found in the LICENSE file.
+
 package goradix
 
 import (
@@ -189,7 +193,12 @@ func (r Radix) match(bs []byte) ([]byte, int, []byte) {
 // TODO: If first letter do not match, continue
 
 // LookUp will return the node matching
-func (r *Radix) LookUp(bs []byte) (*Radix, error) {
+func (r *Radix) LookUp(s string) (*Radix, error) {
+	return r.LookUpBytes([]byte(s))
+}
+
+// LookUpBytes will return the node matching
+func (r *Radix) LookUpBytes(bs []byte) (*Radix, error) {
 	var traverseNode = r
 
 	lbs, matches, _ := traverseNode.match(bs)
@@ -198,7 +207,7 @@ func (r *Radix) LookUp(bs []byte) (*Radix, error) {
 	if matches == len(traverseNode.Path) {
 		if matches < len(bs) {
 			for _, n := range traverseNode.nodes {
-				if tn, err := n.LookUp(lbs); tn != nil {
+				if tn, err := n.LookUpBytes(lbs); tn != nil {
 					return tn, err
 				}
 			}

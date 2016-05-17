@@ -1,3 +1,7 @@
+// Copyright 2016 David Lavieri.  All rights reserved.
+// Use of this source code is governed by a MIT License
+// License that can be found in the LICENSE file.
+
 package goradix
 
 import "testing"
@@ -8,7 +12,7 @@ func TestLookUp(t *testing.T) {
 	insertData(radix, sampleData)
 
 	checkLookUp := func(toLook, expected string, expectedError error) {
-		node, err := radix.LookUp([]byte(toLook))
+		node, err := radix.LookUp(toLook)
 
 		if err != expectedError {
 			t.Logf("Expected Error: %v; Got: %v", expectedError, err)
@@ -65,7 +69,7 @@ func BenchmarkLookUp(b *testing.B) {
 	toLookUp := randomBytes()
 
 	for i := 0; i < b.N; i++ {
-		radix.LookUp(toLookUp)
+		radix.LookUpBytes(toLookUp)
 	}
 }
 
