@@ -186,8 +186,6 @@ func (r Radix) match(bs []byte) ([]byte, int, []byte) {
 
 // ----------------------- Look Up ------------------------ //
 
-// TODO: If first letter do not match, continue
-
 // LookUp will return the node matching
 func (r *Radix) LookUp(s string) (*Radix, error) {
 	return r.LookUpBytes([]byte(s))
@@ -196,7 +194,6 @@ func (r *Radix) LookUp(s string) (*Radix, error) {
 // LookUpBytes will return the node matching
 func (r *Radix) LookUpBytes(bs []byte) (*Radix, error) {
 	var traverseNode = r
-
 	lbs, matches, _ := traverseNode.match(bs)
 
 	// && ((!r.master && matches > 0) || r.master)
@@ -221,10 +218,9 @@ func (r *Radix) LookUpBytes(bs []byte) (*Radix, error) {
 // ----------------------- Autocomplete ------------------------ //
 
 // AutoComplete will complete the word you are looking for
+// and return them as string
 func (r Radix) AutoComplete(s string) ([]string, error) {
-
 	var stringWords []string
-
 	byteWords, err := r.AutoCompleteBytes([]byte(s))
 
 	if err == nil {
@@ -237,6 +233,7 @@ func (r Radix) AutoComplete(s string) ([]string, error) {
 }
 
 // AutoCompleteBytes will complete the word you are looking for
+// and return them as slice of bytes
 func (r Radix) AutoCompleteBytes(bs []byte) ([][]byte, error) {
 	node, strip, err := r.acLookUp(bs)
 

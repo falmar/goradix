@@ -22,7 +22,7 @@ Radix Tree implementation written in Golang. **Still under development**
 | Insert | x | x |  |
 | LookUp | x | x |  |
 | Remove |  |  |  |
-| AutoComplete | x |  |  |
+| AutoComplete | x | x |  |
 
 - Usage Examples:
     * [x] Set

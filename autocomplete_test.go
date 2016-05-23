@@ -3,12 +3,9 @@ package goradix
 import "testing"
 
 func TestAutoComplete(t *testing.T) {
-
 	radix := New()
 	insertData(radix, sampleData)
-
 	var expectedData = []string{"ster", "sting"}
-
 	words, err := radix.AutoComplete("toa")
 
 	if err != nil {

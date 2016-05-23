@@ -13,17 +13,12 @@ import (
 )
 
 func main() {
-
 	radix := goradix.New()
-
-	fmt.Printf("%v\n", []byte(""))
-
 	exampleData(radix)
 
 	scanner := bufio.NewScanner(os.Stdin)
 	fmt.Print("Text to Search: ")
 	for scanner.Scan() {
-
 		wordSlice, err := radix.AutoComplete(scanner.Text())
 
 		if err != nil {

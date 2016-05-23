@@ -13,18 +13,13 @@ import (
 )
 
 func main() {
-
 	radix := goradix.New()
-
 	exampleData(radix)
 
 	scanner := bufio.NewScanner(os.Stdin)
 	fmt.Print("Text to Search: ")
 	for scanner.Scan() {
-
-		textToLook := scanner.Text()
-
-		node, err := radix.LookUp(textToLook)
+		node, err := radix.LookUp(scanner.Text())
 
 		if err != nil {
 			fmt.Println(err)
