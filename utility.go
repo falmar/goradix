@@ -5,9 +5,14 @@
 package goradix
 
 import (
+	"bytes"
 	"fmt"
 	"math/rand"
 )
+
+func random(min, max int) int {
+	return rand.Intn(max-min) + min
+}
 
 func sampleData() []string {
 	return []string{
@@ -46,8 +51,8 @@ func sampleData2() []string {
 	}
 }
 
-func insertData(radix *Radix, cb func() []string) {
-	for i, s := range cb() {
+func insertData(radix *Radix, sd func() []string) {
+	for i, s := range sd() {
 		radix.Insert(s, i)
 	}
 }
@@ -61,6 +66,25 @@ func printRecursive(n *Radix, level int) {
 	}
 }
 
-func random(min, max int) int {
-	return rand.Intn(max-min) + min
+func buildWords(rt *Radix, bs, strip []byte, words chan<- []byte) {
+	var npath []byte
+	npath = append(bs, rt.Path...)
+
+	if len(rt.nodes) > 0 {
+		for _, n := range rt.nodes {
+			buildWords(n, npath, strip, words)
+		}
+	} else {
+		words <- bytes.Replace(npath, strip, nil, 1)
+	}
+}
+
+func buildWordsWorker(inWords <-chan []byte, outWords chan<- [][]byte) {
+	var wordSlice [][]byte
+
+	for v := range inWords {
+		wordSlice = append(wordSlice, v)
+	}
+
+	outWords <- wordSlice
 }

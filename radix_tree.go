@@ -4,11 +4,7 @@
 
 package goradix
 
-import (
-	"bytes"
-	"errors"
-	"fmt"
-)
+import "errors"
 
 // ErrNoMatchFound self explanatory
 var ErrNoMatchFound = errors.New("No Match Found")
@@ -224,96 +220,60 @@ func (r *Radix) LookUpBytes(bs []byte) (*Radix, error) {
 
 // ----------------------- Autocomplete ------------------------ //
 
-// Autocomplete will return the words out of Looked Up string
-func (r Radix) Autocomplete(s string) (node *Radix, words []string, err error) {
-	var lbs []byte
-	bs := []byte(s)
-	lbs, node, err = r.acLookUp(bs)
+// AutoComplete will complete the word you are looking for
+func (r Radix) AutoComplete(s string) ([]string, error) {
 
-	if err != nil {
-		return
-	}
+	var stringWords []string
 
-	fmt.Println(node)
+	byteWords, err := r.AutoCompleteBytes([]byte(s))
 
-	if node.master && len(bs) > 0 {
-		err = ErrNoMatchFound
-	}
-
-	wordChan := make(chan []byte)
-	wordChanOut := make(chan []string)
-
-	go buildWordsWorker(wordChan, wordChanOut)
-
-	fmt.Println(string(lbs))
-
-	if len(lbs) > 0 {
-		for _, n := range node.nodes {
-			if _, matches, _ := n.match(lbs); matches > 0 {
-				if matches == len(lbs) {
-					buildWords(n, []byte{}, n.Path, wordChan)
-				}
-			}
+	if err == nil {
+		for _, bs := range byteWords {
+			stringWords = append(stringWords, string(bs))
 		}
-	} else {
-		buildWords(node, []byte{}, node.Path, wordChan)
 	}
 
-	close(wordChan)
-	words = <-wordChanOut
-
-	fmt.Println(len(words))
-
-	if len(words) == 0 {
-		err = ErrNoMatchFound
-	}
-
-	return
+	return stringWords, err
 }
 
-func (r *Radix) acLookUp(bs []byte) ([]byte, *Radix, error) {
+// AutoCompleteBytes will complete the word you are looking for
+func (r Radix) AutoCompleteBytes(bs []byte) ([][]byte, error) {
+	node, strip, err := r.acLookUp(bs)
+
+	if err != nil {
+		return nil, err
+	}
+
+	inWord := make(chan []byte)
+	outWords := make(chan [][]byte)
+
+	go buildWordsWorker(inWord, outWords)
+	buildWords(node, []byte{}, strip, inWord)
+	close(inWord)
+	wordSlice := <-outWords
+	close(outWords)
+
+	return wordSlice, err
+}
+
+func (r *Radix) acLookUp(bs []byte) (*Radix, []byte, error) {
 	var traverseNode = r
 
 	lbs, matches, _ := traverseNode.match(bs)
 
-	fmt.Println("Look for:", string(bs), "in", string(traverseNode.Path), "matches", matches, "turn to", string(lbs))
-
-	if matches == len(traverseNode.Path) {
-		if matches <= len(lbs) {
+	if matches > 0 || (matches == 0 && traverseNode.master) {
+		if matches == len(traverseNode.Path) && matches < len(bs) {
 			for _, n := range traverseNode.nodes {
-				if nlbs, tn, err := n.acLookUp(lbs); tn != nil {
-					return nlbs, tn, err
+				if tn, nlbs, err := n.acLookUp(lbs); tn != nil {
+					return tn, nlbs, err
 				}
 			}
 		}
 
-		return lbs, traverseNode, nil
-	}
-
-	return lbs, nil, ErrNoMatchFound
-}
-
-func buildWords(rt *Radix, bs, strip []byte, words chan<- []byte) {
-	var npath []byte
-
-	npath = append(bs, rt.Path...)
-
-	if len(rt.nodes) > 0 {
-		for _, n := range rt.nodes {
-			buildWords(n, npath, strip, words)
+		if len(lbs) == 0 {
+			return traverseNode, bs, nil
 		}
-	} else {
-		fmt.Println("Write word: ", string(npath), string(strip), "Becomes:", string(bytes.Replace(npath, strip, []byte(""), -1)))
-		words <- bytes.Replace(npath, strip, []byte(""), 1)
-	}
-}
-
-func buildWordsWorker(inWords <-chan []byte, outWords chan<- []string) {
-	var wordSlice []string
-
-	for v := range inWords {
-		wordSlice = append(wordSlice, string(v))
 	}
 
-	outWords <- wordSlice
+	return nil, nil, ErrNoMatchFound
 }

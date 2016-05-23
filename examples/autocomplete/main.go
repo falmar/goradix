@@ -16,22 +16,22 @@ func main() {
 
 	radix := goradix.New()
 
+	fmt.Printf("%v\n", []byte(""))
+
 	exampleData(radix)
 
 	scanner := bufio.NewScanner(os.Stdin)
 	fmt.Print("Text to Search: ")
 	for scanner.Scan() {
 
-		textToLook := scanner.Text()
-
-		_, wordSlice, err := radix.Autocomplete(textToLook)
+		wordSlice, err := radix.AutoComplete(scanner.Text())
 
 		if err != nil {
 			fmt.Println(err)
-			continue
+		} else {
+			fmt.Println(wordSlice)
 		}
 
-		fmt.Println(wordSlice)
 		fmt.Print("Text to Search: ")
 	}
 }

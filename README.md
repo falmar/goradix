@@ -20,9 +20,9 @@ Radix Tree implementation written in Golang. **Still under development**
 | Code Task | Implementation | Test | Benchmark
 |---|:---:|:---:|:---:|
 | Insert | x | x |  |
-| LookUp | x | x | incomplete |
+| LookUp | x | x |  |
 | Remove |  |  |  |
-| AutoComplete |  |  |  |
+| AutoComplete | x |  |  |
 
 - Usage Examples:
     * [x] Set
@@ -50,7 +50,7 @@ package main
 import "github.com/falmar/goradix"
 
 func main() {
-	radix := goradix.New()
+  radix := goradix.New()
   radix.Set(100)
 }
 ```
@@ -65,7 +65,7 @@ package main
 import "github.com/falmar/goradix"
 
 func main() {
-	radix := goradix.New()
+  radix := goradix.New()
   radix.Set(100)
   fmt.Println(radix.Get()) // output: 100
 
