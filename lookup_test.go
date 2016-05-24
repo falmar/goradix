@@ -8,10 +8,9 @@ import "testing"
 
 func TestLookUp(t *testing.T) {
 	radix := New()
-
 	insertData(radix, sampleData)
 
-	checkLookUp := func(toLook, expected string, expectedError error) {
+	checkLookUp := func(toLook, expected string, expectedLeaf bool, expectedError error) {
 		node, err := radix.sLookUp([]byte(toLook))
 
 		if err != expectedError {
@@ -27,6 +26,11 @@ func TestLookUp(t *testing.T) {
 			t.Fail()
 			t.Logf("Expected node to not be: %v; Got: %v", nil, node)
 			return
+		}
+
+		if node.leaf != expectedLeaf {
+			t.Fail()
+			t.Logf("Expected Leaf: %v; Got: %v", expectedLeaf, node.leaf)
 		}
 
 		expectedPath := []byte(expected)
@@ -46,18 +50,18 @@ func TestLookUp(t *testing.T) {
 	}
 
 	// Correct
-	checkLookUp("t", "t", nil)
-	checkLookUp("toast", "oast", nil)
-	checkLookUp("toasting", "ing", nil)
-	checkLookUp("test", "est", nil)
-	checkLookUp("slow", "slow", nil)
-	checkLookUp("slowly", "ly", nil)
+	checkLookUp("t", "t", false, nil)
+	checkLookUp("toast", "oast", false, nil)
+	checkLookUp("toasting", "ing", true, nil)
+	checkLookUp("test", "est", true, nil)
+	checkLookUp("slow", "slow", false, nil)
+	checkLookUp("slowly", "ly", true, nil)
 
 	//Intentional fails
-	checkLookUp("toastar", "", ErrNoMatchFound)
-	checkLookUp("toasto", "", ErrNoMatchFound)
-	checkLookUp("tast", "", ErrNoMatchFound)
-	checkLookUp("slowe", "", ErrNoMatchFound)
+	checkLookUp("toastar", "", false, ErrNoMatchFound)
+	checkLookUp("toasto", "", false, ErrNoMatchFound)
+	checkLookUp("tast", "", false, ErrNoMatchFound)
+	checkLookUp("slowe", "", false, ErrNoMatchFound)
 }
 
 // ----------------------- Benchmarks ------------------------ //

@@ -137,11 +137,15 @@ func (r *Radix) InsertBytes(bs []byte, val ...interface{}) bool {
 }
 
 // Add children node to the current Radix Tree node
-func (r *Radix) addChildren(bs []byte, v interface{}, c []*Radix) *Radix {
-	nNode := &Radix{Path: bs, nodes: c, parent: r, value: v}
-	r.nodes = append(r.nodes, nNode)
+func (r *Radix) addChildren(bs []byte, v interface{}, c []*Radix) {
+	r.leaf = false
+	var setLeaf bool
 
-	return nNode
+	if c == nil {
+		setLeaf = true
+	}
+
+	r.nodes = append(r.nodes, &Radix{Path: bs, nodes: c, parent: r, value: v, leaf: setLeaf})
 }
 
 // Push the current children nodes to a new node with the path
