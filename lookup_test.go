@@ -12,7 +12,7 @@ func TestLookUp(t *testing.T) {
 	insertData(radix, sampleData)
 
 	checkLookUp := func(toLook, expected string, expectedError error) {
-		node, err := radix.LookUp(toLook)
+		node, err := radix.sLookUp([]byte(toLook))
 
 		if err != expectedError {
 			t.Logf("Expected Error: %v; Got: %v", expectedError, err)

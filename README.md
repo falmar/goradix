@@ -105,10 +105,10 @@ func main() {
 
 ```go
 // bs string required
-func (r *Radix) LookUp(s string) (*Radix, error) {...}
+func (r *Radix) LookUp(s string) (interface{}, error) {...}
 // or
 // bs slice of bytes required
-func (r *Radix) LookUpBytes(bs []byte) (*Radix, error) {...}
+func (r *Radix) LookUpBytes(bs []byte) (interface{}, error) {...}
 ```
 ```go
 package main
@@ -126,14 +126,14 @@ func main() {
 	radix.Insert("romane", 100)
 	radix.Insert("romulus", 1000)
 
-	node, err := radix.LookUp([]byte("romane"))
+	value, err := radix.LookUp("romane")
 
 	if err != nil {
     // No Match Found
 		fmt.Println(err)
 	} else {
     // Found node, Value: 100
-		fmt.Println("Found node, Value: ", node.Get())
+		fmt.Println("Found node, Value: ", value)
 	}
 }
 ```

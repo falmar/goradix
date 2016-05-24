@@ -19,12 +19,12 @@ func main() {
 	scanner := bufio.NewScanner(os.Stdin)
 	fmt.Print("Text to Search: ")
 	for scanner.Scan() {
-		node, err := radix.LookUp(scanner.Text())
+		v, err := radix.LookUp(scanner.Text())
 
 		if err != nil {
 			fmt.Println(err)
 		} else {
-			fmt.Println("Found node Value:", node.Get())
+			fmt.Println("Found node Value:", v)
 		}
 
 		fmt.Print("Text to Search: ")

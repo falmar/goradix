@@ -16,6 +16,7 @@ type Radix struct {
 	parent *Radix
 	master bool
 	value  interface{}
+	leaf   bool
 }
 
 // New return a Radix Tree
@@ -58,6 +59,7 @@ func (r *Radix) InsertBytes(bs []byte, val ...interface{}) bool {
 	if len(r.Path) == 0 && len(r.nodes) == 0 {
 		r.Path = bs
 		r.Set(value)
+		r.leaf = true
 		return true
 	}
 
@@ -187,12 +189,22 @@ func (r Radix) match(bs []byte) ([]byte, int, []byte) {
 // ----------------------- Look Up ------------------------ //
 
 // LookUp will return the node matching
-func (r *Radix) LookUp(s string) (*Radix, error) {
+func (r *Radix) LookUp(s string) (interface{}, error) {
 	return r.LookUpBytes([]byte(s))
 }
 
 // LookUpBytes will return the node matching
-func (r *Radix) LookUpBytes(bs []byte) (*Radix, error) {
+func (r *Radix) LookUpBytes(bs []byte) (interface{}, error) {
+	node, err := r.sLookUp(bs)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return node.Get(), err
+}
+
+func (r *Radix) sLookUp(bs []byte) (*Radix, error) {
 	var traverseNode = r
 	lbs, matches, _ := traverseNode.match(bs)
 
@@ -200,7 +212,7 @@ func (r *Radix) LookUpBytes(bs []byte) (*Radix, error) {
 	if matches == len(traverseNode.Path) {
 		if matches < len(bs) {
 			for _, n := range traverseNode.nodes {
-				if tn, err := n.LookUpBytes(lbs); tn != nil {
+				if tn, err := n.sLookUp(lbs); tn != nil {
 					return tn, err
 				}
 			}
