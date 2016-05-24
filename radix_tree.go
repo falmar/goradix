@@ -63,12 +63,15 @@ func (r *Radix) InsertBytes(bs []byte, val ...interface{}) bool {
 		return true
 	}
 
+	var pathLen = len(r.Path)
+	var bsLen = len(bs)
+
 	match := 0
 	i := 0
 	var v byte
 
 	for i, v = range r.Path {
-		if i >= len(bs) {
+		if i >= bsLen {
 			// No more matchs to check
 			return false
 		}
@@ -101,6 +104,14 @@ func (r *Radix) InsertBytes(bs []byte, val ...interface{}) bool {
 	}
 
 	if match > 0 {
+		// Check if it already exists
+		if match == pathLen && pathLen == bsLen {
+			if value != nil {
+				r.Set(value)
+			}
+			return true
+		}
+
 		// If it matches all current node path and the byte string
 		for _, c := range r.nodes {
 			if c.InsertBytes(bs[i+1:], value) {

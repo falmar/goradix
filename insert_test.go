@@ -30,17 +30,23 @@ func TestInsertSeparation(t *testing.T) {
 	radix := New()
 	radix.Insert("toaster", "value1")
 	radix.Insert("toasting", "value2")
+	radix.Insert("toast", "value3")
 
 	expectedText := [][]byte{
 		[]byte("toast"), []byte("er"), []byte("ing"),
 	}
-	expectedValues := []string{"value1", "value2"}
+	expectedValues := []string{"value3", "value1", "value2"}
 
 	for i, v := range radix.Path {
 		if v != expectedText[0][i] {
 			t.Fail()
 			t.Logf("Expected: %d; got: %d", v, expectedText[0][i])
 		}
+	}
+
+	if radix.Get() != expectedValues[0] {
+		t.Fail()
+		t.Logf("Expected value: %v; got: %v", radix.Get(), expectedValues[0])
 	}
 
 	for i, n := range radix.nodes {
@@ -51,9 +57,9 @@ func TestInsertSeparation(t *testing.T) {
 			}
 		}
 
-		if n.Get() != expectedValues[i] {
+		if n.Get() != expectedValues[i+1] {
 			t.Fail()
-			t.Logf("Expected value: %v; got: %v", n.Get(), expectedValues[i])
+			t.Logf("Expected value: %v; got: %v", n.Get(), expectedValues[i+1])
 		}
 	}
 }
