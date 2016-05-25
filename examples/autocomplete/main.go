@@ -19,7 +19,7 @@ func main() {
 	scanner := bufio.NewScanner(os.Stdin)
 	fmt.Print("Text to Search: ")
 	for scanner.Scan() {
-		wordSlice, err := radix.AutoComplete(scanner.Text())
+		wordSlice, err := radix.AutoComplete(scanner.Text(), true)
 
 		if err != nil {
 			fmt.Println(err)

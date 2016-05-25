@@ -246,9 +246,9 @@ func (r *Radix) sLookUp(bs []byte) (*Radix, error) {
 
 // AutoComplete will complete the word you are looking for
 // and return them as string
-func (r Radix) AutoComplete(s string) ([]string, error) {
+func (r Radix) AutoComplete(s string, wholeWord bool) ([]string, error) {
 	var stringWords []string
-	byteWords, err := r.AutoCompleteBytes([]byte(s))
+	byteWords, err := r.AutoCompleteBytes([]byte(s), wholeWord)
 
 	if err == nil {
 		for _, bs := range byteWords {
@@ -261,8 +261,9 @@ func (r Radix) AutoComplete(s string) ([]string, error) {
 
 // AutoCompleteBytes will complete the word you are looking for
 // and return them as slice of bytes
-func (r Radix) AutoCompleteBytes(bs []byte) ([][]byte, error) {
+func (r Radix) AutoCompleteBytes(bs []byte, wholeWord bool) ([][]byte, error) {
 	node, strip, err := r.acLookUp(bs)
+	var ap []byte
 
 	if err != nil {
 		return nil, err
@@ -272,7 +273,10 @@ func (r Radix) AutoCompleteBytes(bs []byte) ([][]byte, error) {
 	outWords := make(chan [][]byte)
 
 	go buildWordsWorker(inWord, outWords)
-	buildWords(node, []byte{}, strip, inWord)
+	if wholeWord {
+		ap = bs
+	}
+	buildWords(node, ap, strip, inWord)
 	close(inWord)
 	wordSlice := <-outWords
 	close(outWords)
