@@ -49,6 +49,11 @@ func TestInsertSeparation(t *testing.T) {
 		t.Logf("Expected value: %v; got: %v", radix.Get(), expectedValues[0])
 	}
 
+	if radix.key != true {
+		t.Fail()
+		t.Logf("Expected key: %v; Got: %v", true, radix.key)
+	}
+
 	for i, n := range radix.nodes {
 		for ii, v := range n.Path {
 			if v != expectedText[i+1][ii] {
@@ -61,10 +66,15 @@ func TestInsertSeparation(t *testing.T) {
 			t.Fail()
 			t.Logf("Expected value: %v; got: %v", n.Get(), expectedValues[i+1])
 		}
+
+		if n.key != true {
+			t.Fail()
+			t.Logf("Expected key: %v; Got: %v", true, n.key)
+		}
 	}
 }
 
-func checkNodes(t *testing.T, nodes []*Radix, expectedText [][]byte, expectedValue []interface{}, level int) int {
+func checkNodes(t *testing.T, nodes []*Radix, expectedText [][]byte, expectedValue []interface{}, expectedKeys []bool, level int) int {
 	for _, n := range nodes {
 		for i, v := range n.Path {
 			if v != expectedText[level][i] {
@@ -78,7 +88,12 @@ func checkNodes(t *testing.T, nodes []*Radix, expectedText [][]byte, expectedVal
 			t.Logf("Expected value: %v; got: %v", expectedValue[level], n.Get())
 		}
 
-		level = checkNodes(t, n.nodes, expectedText, expectedValue, level+1)
+		if n.key != expectedKeys[level] {
+			t.Fail()
+			t.Logf("Expected Key: %v; got: %v. Node: %s", expectedKeys[level], n.key, n.Path)
+		}
+
+		level = checkNodes(t, n.nodes, expectedText, expectedValue, expectedKeys, level+1)
 	}
 	return level
 }
@@ -101,10 +116,14 @@ func TestInsertSeparationComplex(t *testing.T) {
 		nil, 0, nil, 1, 2, 3, 4,
 	}
 
+	expectedKeys := []bool{
+		false, true, false, true, true, true, true,
+	}
+
 	if radix.Path != nil {
 		t.Fail()
 		t.Logf("Expected: %v; got: %v", nil, radix.Path)
 	}
 
-	checkNodes(t, radix.nodes, expectedTexts, expectedValues, 0)
+	checkNodes(t, radix.nodes, expectedTexts, expectedValues, expectedKeys, 0)
 }

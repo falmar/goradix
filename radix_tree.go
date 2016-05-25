@@ -11,12 +11,12 @@ var ErrNoMatchFound = errors.New("No Match Found")
 
 // Radix Radix
 type Radix struct {
-	Path   []byte
-	nodes  []*Radix
-	parent *Radix
-	master bool
-	value  interface{}
-	leaf   bool
+	Path      []byte
+	nodes     []*Radix
+	parent    *Radix
+	master    bool
+	value     interface{}
+	leaf, key bool
 }
 
 // New return a Radix Tree
@@ -34,11 +34,6 @@ func (r *Radix) Set(v interface{}) {
 // Get a value from Radix Tree node
 func (r *Radix) Get() interface{} {
 	return r.value
-}
-
-// Nodes children
-func (r *Radix) Nodes() []*Radix {
-	return r.nodes
 }
 
 // ----------------------- Inserts ------------------------ //
@@ -60,6 +55,7 @@ func (r *Radix) InsertBytes(bs []byte, val ...interface{}) bool {
 		r.Path = bs
 		r.Set(value)
 		r.leaf = true
+		r.key = true
 		return true
 	}
 
@@ -72,7 +68,7 @@ func (r *Radix) InsertBytes(bs []byte, val ...interface{}) bool {
 
 	for i, v = range r.Path {
 		if i >= bsLen {
-			// No more matchs to check
+			// No more matches to check
 			return false
 		}
 
@@ -90,9 +86,10 @@ func (r *Radix) InsertBytes(bs []byte, val ...interface{}) bool {
 				// If there is no existing nodes then slice the path
 				// until the last occurrence, add what is left of the path as
 				// children and also add the byte string.
-				r.addChildren(r.Path[i:], r.Get(), nil)
+				r.addChildren(r.Path[i:], r.Get(), nil, r.key)
+				r.key = false
 				r.Set(nil)
-				r.addChildren(bs[i:], value, nil)
+				r.addChildren(bs[i:], value, nil, true)
 				r.Path = r.Path[:i]
 			} else {
 				// Otherwise just add the new byte string as
@@ -109,6 +106,7 @@ func (r *Radix) InsertBytes(bs []byte, val ...interface{}) bool {
 			if value != nil {
 				r.Set(value)
 			}
+			r.key = true
 			return true
 		}
 
@@ -119,7 +117,7 @@ func (r *Radix) InsertBytes(bs []byte, val ...interface{}) bool {
 			}
 		}
 		// no match found on nodes
-		r.addChildren(bs[i+1:], value, nil)
+		r.addChildren(bs[i+1:], value, nil, true)
 
 		return true
 	}
@@ -140,7 +138,7 @@ func (r *Radix) InsertBytes(bs []byte, val ...interface{}) bool {
 
 		// no match found on children nodes
 		// add new byte string as node
-		r.addChildren(bs, value, nil)
+		r.addChildren(bs, value, nil, true)
 		return true
 	}
 
@@ -148,7 +146,7 @@ func (r *Radix) InsertBytes(bs []byte, val ...interface{}) bool {
 }
 
 // Add children node to the current Radix Tree node
-func (r *Radix) addChildren(bs []byte, v interface{}, c []*Radix) {
+func (r *Radix) addChildren(bs []byte, v interface{}, c []*Radix, k bool) {
 	r.leaf = false
 	var setLeaf bool
 
@@ -156,7 +154,7 @@ func (r *Radix) addChildren(bs []byte, v interface{}, c []*Radix) {
 		setLeaf = true
 	}
 
-	r.nodes = append(r.nodes, &Radix{Path: bs, nodes: c, parent: r, value: v, leaf: setLeaf})
+	r.nodes = append(r.nodes, &Radix{Path: bs, nodes: c, parent: r, value: v, leaf: setLeaf, key: k})
 }
 
 // Push the current children nodes to a new node with the path
@@ -165,15 +163,16 @@ func (r *Radix) addChildren(bs []byte, v interface{}, c []*Radix) {
 func (r *Radix) pushChildren(bs []byte, v interface{}, i int, master bool) {
 	nodes := r.nodes
 	r.nodes = nil
-	r.addChildren(r.Path[i:], r.Get(), nodes)
+	r.addChildren(r.Path[i:], r.Get(), nodes, r.key)
+	r.key = false
 	r.Set(nil)
 
 	if master {
 		r.Path = nil
-		r.addChildren(bs, v, nil)
+		r.addChildren(bs, v, nil, true)
 	} else {
 		r.Path = r.Path[:i]
-		r.addChildren(bs[i:], v, nil)
+		r.addChildren(bs[i:], v, nil, true)
 	}
 }
 
