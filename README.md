@@ -9,7 +9,6 @@ Radix Tree implementation written in Golang. **Still under development**
 ![](https://upload.wikimedia.org/wikipedia/commons/thumb/a/ae/Patricia_trie.svg/400px-Patricia_trie.svg.png)
 
 ## Content
- - [Todo](#todo)
  - [Usage](#usage)
  - [Benchmarks](#benchmarks)
  - [License](#license)
@@ -38,41 +37,6 @@ Radix Tree implementation written in Golang. **Still under development**
 Download: `go get github.com/falmar/goradix`
 
 Import `import "github.com/falmar/goradix"`
-
-### Set
-```go
-// Set a value to the Radix Tree node
-func (r *Radix) Set(v interface{}) {...}
-```
-```go
-package main
-
-import "github.com/falmar/goradix"
-
-func main() {
-  radix := goradix.New()
-  radix.Set(100)
-}
-```
-### Get
-```go
-// Get a value from Radix Tree node
-func (r *Radix) Get() interface{} {...}
-```
-```go
-package main
-
-import "github.com/falmar/goradix"
-
-func main() {
-  radix := goradix.New()
-  radix.Set(100)
-  fmt.Println(radix.Get()) // output: 100
-
-  radix.Set("something")
-  fmt.Println(radix.Get()) // output: something
-}
-```
 
 ### Insert | InsertBytes
 

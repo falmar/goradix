@@ -20,9 +20,9 @@ func TestInsert(t *testing.T) {
 		}
 	}
 
-	if radix.Get() != expectedValue {
+	if radix.get() != expectedValue {
 		t.Fail()
-		t.Logf("Expected value: %v; got: %v", radix.Get(), expectedValue)
+		t.Logf("Expected value: %v; got: %v", radix.get(), expectedValue)
 	}
 }
 
@@ -44,9 +44,9 @@ func TestInsertSeparation(t *testing.T) {
 		}
 	}
 
-	if radix.Get() != expectedValues[0] {
+	if radix.get() != expectedValues[0] {
 		t.Fail()
-		t.Logf("Expected value: %v; got: %v", radix.Get(), expectedValues[0])
+		t.Logf("Expected value: %v; got: %v", radix.get(), expectedValues[0])
 	}
 
 	if radix.key != true {
@@ -62,9 +62,9 @@ func TestInsertSeparation(t *testing.T) {
 			}
 		}
 
-		if n.Get() != expectedValues[i+1] {
+		if n.get() != expectedValues[i+1] {
 			t.Fail()
-			t.Logf("Expected value: %v; got: %v", n.Get(), expectedValues[i+1])
+			t.Logf("Expected value: %v; got: %v", n.get(), expectedValues[i+1])
 		}
 
 		if n.key != true {
@@ -83,9 +83,9 @@ func checkNodes(t *testing.T, nodes []*Radix, expectedText [][]byte, expectedVal
 			}
 		}
 
-		if n.Get() != expectedValue[level] {
+		if n.get() != expectedValue[level] {
 			t.Fail()
-			t.Logf("Expected value: %v; got: %v", expectedValue[level], n.Get())
+			t.Logf("Expected value: %v; got: %v", expectedValue[level], n.get())
 		}
 
 		if n.key != expectedKeys[level] {
