@@ -20,16 +20,16 @@ Radix Tree implementation written in Golang. **Still under development**
 |---|:---:|:---:|:---:|
 | Insert | x | x |  |
 | LookUp | x | x |  |
-| Remove |  |  |  |
 | AutoComplete | x | x |  |
+| Match |  |  |  |
+| Remove |  |  |  | |
 
 - Usage Examples:
-    * [x] Set
-    * [x] Get
     * [x] Insert
     * [x] LookUp
+    * [x] AutoComplete
+    * [ ] Match
     * [ ] Remove
-    * [ ] AutoComplete
 
 
 ## Usage:
@@ -41,10 +41,10 @@ Import `import "github.com/falmar/goradix"`
 ### Insert | InsertBytes
 
 ```go
-// s string required, value (optional)
+// string required, value (optional)
 func (r *Radix) Insert(s string, value ...interface{}){...}
 // or
-// bs slice of bytes required, value (optional)
+// slice of bytes required, value (optional)
 func (r *Radix) InsertBytes(bs []byte, val ...interface{}) bool {...}
 ```
 ```go
@@ -68,10 +68,10 @@ func main() {
 ### LookUp | LookUpBytes
 
 ```go
-// bs string required
+// string required
 func (r *Radix) LookUp(s string) (interface{}, error) {...}
 // or
-// bs slice of bytes required
+// slice of bytes required
 func (r *Radix) LookUpBytes(bs []byte) (interface{}, error) {...}
 ```
 ```go
@@ -85,20 +85,18 @@ import (
 
 func main() {
 	radix := goradix.New()
-
 	radix.Insert("romanus", 1)
 	radix.Insert("romane", 100)
 	radix.Insert("romulus", 1000)
 
 	value, err := radix.LookUp("romane")
 
-	if err != nil {
-    // No Match Found
-		fmt.Println(err)
-	} else {
-    // Found node, Value: 100
-		fmt.Println("Found node, Value: ", value)
+	if err != nil { // No Match Found
+		return
 	}
+
+	// Output: Found node, Value: 100
+	fmt.Println("Found node, Value: ", value)
 }
 ```
 
@@ -106,7 +104,45 @@ func main() {
 Under development
 
 ### AutoComplete
-Under development
+```go
+// string required, bool required
+func (r Radix) AutoComplete(s string, wholeWord bool) ([]string, error) {...}
+// or
+// slice of bytes required,  bool required
+func (r Radix) AutoComplete(bs []byte, wholeWord bool) ([][]byte, error) {...}
+```
+```go
+package main
+
+import (
+	"fmt"
+
+	"github.com/falmar/goradix"
+)
+
+func main() {
+	radix := goradix.New()
+	radix.Insert("romanus", 1)
+	radix.Insert("romane", 100)
+	radix.Insert("romulus", 1000)
+
+	// Return remaining text
+	words, err := radix.AutoComplete("ro", false)
+
+	if err != nil { // No Match Found
+		return
+	}
+
+	// Output: AutoComplete 'rom'; Words: [manus mane mulus]
+	fmt.Printf("AutoComplete: '%s'; Words: %v\n", "ro", words)
+
+	// Return whole words
+	words, _ = radix.AutoComplete("ro", true)
+
+	// Output: AutoComplete 'rom'; Words: [romanus romane romulus]
+	fmt.Printf("AutoComplete: '%s'; Words: %v\n", "ro", words)
+}
+```
 
 ## Benchmarks
 Under development

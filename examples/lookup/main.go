@@ -5,36 +5,23 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
-	"os"
 
 	"github.com/falmar/goradix"
 )
 
 func main() {
 	radix := goradix.New()
-	exampleData(radix)
+	radix.Insert("romanus", 1)
+	radix.Insert("romane", 100)
+	radix.Insert("romulus", 1000)
 
-	scanner := bufio.NewScanner(os.Stdin)
-	fmt.Print("Text to Search: ")
-	for scanner.Scan() {
-		v, err := radix.LookUp(scanner.Text())
+	value, err := radix.LookUp("romane")
 
-		if err != nil {
-			fmt.Println(err)
-		} else {
-			fmt.Println("Found node Value:", v)
-		}
-
-		fmt.Print("Text to Search: ")
+	if err != nil { // No Match Found
+		return
 	}
-}
 
-func exampleData(radix *goradix.Radix) {
-	text := []string{"test", "toaster", "toasting", "slow", "slowly"}
-	for i, v := range text {
-		fmt.Println("Inserted:", v, "Value: ", i)
-		radix.Insert(v, i)
-	}
+	// Output: Found node, Value: 100
+	fmt.Println("Found node, Value: ", value)
 }

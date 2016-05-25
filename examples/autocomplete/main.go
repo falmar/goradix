@@ -5,53 +5,30 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
-	"os"
 
 	"github.com/falmar/goradix"
 )
 
 func main() {
 	radix := goradix.New()
-	exampleData(radix)
+	radix.Insert("romanus", 1)
+	radix.Insert("romane", 100)
+	radix.Insert("romulus", 1000)
 
-	scanner := bufio.NewScanner(os.Stdin)
-	fmt.Print("Text to Search: ")
-	for scanner.Scan() {
-		wordSlice, err := radix.AutoComplete(scanner.Text(), true)
+	// Return remaining text
+	words, err := radix.AutoComplete("ro", false)
 
-		if err != nil {
-			fmt.Println(err)
-		} else {
-			fmt.Println(wordSlice)
-		}
-
-		fmt.Print("Text to Search: ")
+	if err != nil { // No Match Found
+		return
 	}
-}
 
-func exampleData(radix *goradix.Radix) {
-	radix.Insert("romane")
-	radix.Insert("romanus")
-	radix.Insert("romulus")
-	radix.Insert("rubens")
-	radix.Insert("ruber")
-	radix.Insert("rubicon")
-	radix.Insert("rubicundus")
-	radix.Insert("rinicundus")
-	radix.Insert("repicundus")
-	radix.Insert("lepicundus")
-	radix.Insert("lepocundus")
-	radix.Insert("lomulus")
-	radix.Insert("lupus")
-	radix.Insert("huber")
-	radix.Insert("pepicundus")
-	radix.Insert("pepicundas")
-	radix.Insert("pepocundus")
-	radix.Insert("pomulus")
-	radix.Insert("pupus")
-	radix.Insert("yuber")
-	radix.Insert("yubel")
-	radix.Insert("yubo")
+	// AutoComplete 'rom'; Words: [manus mane mulus]
+	fmt.Printf("AutoComplete: '%s'; Words: %v\n", "ro", words)
+
+	// Return whole words
+	words, _ = radix.AutoComplete("ro", true)
+
+	// AutoComplete 'rom'; Words: [romanus romane romulus]
+	fmt.Printf("AutoComplete: '%s'; Words: %v\n", "ro", words)
 }
