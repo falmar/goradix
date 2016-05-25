@@ -19,7 +19,7 @@ func TestAutoComplete(t *testing.T) {
 		}
 
 		if len(words) != len(expectedData) {
-			t.Logf("Word count mismatch, Expected: %d; Got: %d", len(expectedData), len(words))
+			t.Logf("Word count mismatch, Expected: %d; Got: %d; words: %v; tl: %s", len(expectedData), len(words), words, toLook)
 			t.FailNow()
 		}
 
@@ -39,14 +39,16 @@ func TestAutoComplete(t *testing.T) {
 		}
 	}
 
+	test("t", []string{"est", "oaster", "oasting"}, false)
+	test("t", []string{"test", "toaster", "toasting"}, true)
 	test("toa", []string{"ster", "sting"}, false)
 	test("te", []string{"st"}, false)
-	test("slo", []string{"wly"}, false)
+	test("slo", []string{"w", "wly"}, false)
+	test("slow", []string{"ly"}, false)
 	test("toa", []string{"toaster", "toasting"}, true)
-	test("slo", []string{"slowly"}, true)
+	test("slo", []string{"slow", "slowly"}, true)
+	test("slow", []string{"slowly"}, true)
 	test("te", []string{"test"}, true)
-
-	// TODO: Fix autocomplete to return not only leaf
-	// test("slo", []string{"w", "ly"})
+	test("test", nil, true)
 
 }

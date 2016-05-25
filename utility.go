@@ -66,16 +66,30 @@ func printRecursive(n *Radix, level int) {
 	}
 }
 
-func buildWords(rt *Radix, bs, strip []byte, words chan<- []byte) {
+func buildWords(rt *Radix, bs, strip []byte, words chan<- []byte, ww bool) {
 	var npath []byte
 	npath = append(bs, rt.Path...)
 
 	if len(rt.nodes) > 0 {
-		for _, n := range rt.nodes {
-			buildWords(n, npath, strip, words)
+		if rt.key {
+			addWord(rt, npath, strip, ww, words)
 		}
-	} else {
-		words <- bytes.Replace(npath, strip, nil, 1)
+
+		for _, n := range rt.nodes {
+			buildWords(n, npath, strip, words, ww)
+		}
+	} else if rt.key {
+		addWord(rt, npath, strip, ww, words)
+	}
+}
+
+func addWord(rt *Radix, npath, strip []byte, ww bool, words chan<- []byte) {
+	if w := bytes.Replace(npath, strip, nil, 1); len(w) > 0 {
+		if !ww {
+			words <- w
+		} else if _, matches, _ := rt.match(strip); matches != len(rt.Path) && ww {
+			words <- w
+		}
 	}
 }
 

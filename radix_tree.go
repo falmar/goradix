@@ -278,7 +278,7 @@ func (r Radix) AutoCompleteBytes(bs []byte, wholeWord bool) ([][]byte, error) {
 	if wholeWord {
 		ap = bs
 	}
-	buildWords(node, ap, strip, inWord)
+	buildWords(node, ap, strip, inWord, wholeWord)
 	close(inWord)
 	wordSlice := <-outWords
 	close(outWords)
