@@ -38,14 +38,11 @@ Download: `go get github.com/falmar/goradix`
 
 Import `import "github.com/falmar/goradix"`
 
-### Insert | InsertBytes
+### Insert
 
 ```go
 // string required, value (optional)
 func (r *Radix) Insert(s string, value ...interface{}){...}
-// or
-// slice of bytes required, value (optional)
-func (r *Radix) InsertBytes(bs []byte, val ...interface{}) bool {...}
 ```
 ```go
 package main
@@ -59,20 +56,14 @@ func main() {
 	radix.Insert("romanus")
 	radix.Insert("romane")
 	radix.Insert("romulus")
-
-  // You can also insert slice of bytes
-  radix.InsertBytes([]byte("rubens"))
 }
 ```
 
-### LookUp | LookUpBytes
+### LookUp
 
 ```go
 // string required
-func (r *Radix) LookUp(s string) (interface{}, error) {...}
-// or
-// slice of bytes required
-func (r *Radix) LookUpBytes(bs []byte) (interface{}, error) {...}
+func (r *Radix) LookUp(s string) (interface{}, error) {...} {...}
 ```
 ```go
 package main
@@ -100,16 +91,10 @@ func main() {
 }
 ```
 
-### Remove
-Under development
-
 ### AutoComplete
 ```go
-// string required, bool required
+// string, bool required
 func (r Radix) AutoComplete(s string, wholeWord bool) ([]string, error) {...}
-// or
-// slice of bytes required,  bool required
-func (r Radix) AutoComplete(bs []byte, wholeWord bool) ([][]byte, error) {...}
 ```
 ```go
 package main
@@ -143,6 +128,12 @@ func main() {
 	fmt.Printf("AutoComplete: '%s'; Words: %v\n", "ro", words)
 }
 ```
+
+### Match
+Under development
+
+### Remove
+Under development
 
 ## Benchmarks
 Under development
