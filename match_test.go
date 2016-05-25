@@ -6,7 +6,7 @@ package goradix
 
 import "testing"
 
-func TestMatch(t *testing.T) {
+func TestSourceMatch(t *testing.T) {
 
 	match := func(t *testing.T, insert []string, matchString, lbsMatch, plbsMatch []byte, matchesInt int) {
 		//Complex N. 1

@@ -6,7 +6,7 @@ package goradix
 
 import "testing"
 
-func TestLookUp(t *testing.T) {
+func TestSourceLookUp(t *testing.T) {
 	radix := New()
 	insertData(radix, sampleData)
 
@@ -14,7 +14,7 @@ func TestLookUp(t *testing.T) {
 		node, err := radix.sLookUp([]byte(toLook))
 
 		if err != expectedError {
-			t.Logf("Expected Error: %v; Got: %v", expectedError, err)
+			t.Logf("Expected Error: %v; Got: %v. Node: %s", expectedError, err, node.Path)
 			t.Fail()
 		}
 
@@ -56,12 +56,36 @@ func TestLookUp(t *testing.T) {
 	checkLookUp("test", "est", true, nil)
 	checkLookUp("slow", "slow", false, nil)
 	checkLookUp("slowly", "ly", true, nil)
+	checkLookUp("toaster", "er", true, nil)
 
-	//Intentional fails
+	// Intentional fails
 	checkLookUp("toastar", "", false, ErrNoMatchFound)
 	checkLookUp("toasto", "", false, ErrNoMatchFound)
 	checkLookUp("tast", "", false, ErrNoMatchFound)
 	checkLookUp("slowe", "", false, ErrNoMatchFound)
+}
+
+func TestLookUp(t *testing.T) {
+	radix := New()
+	insertData(radix, sampleData)
+
+	toLookUp := []string{"t", "test", "toast", "toasting", "slowly"}
+	expectedValues := []interface{}{nil, 0, nil, 2, 4}
+	expectedError := []error{ErrNoMatchFound, nil, ErrNoMatchFound, nil, nil}
+
+	for i, s := range toLookUp {
+		v, err := radix.LookUp(s)
+
+		if expectedError[i] != err {
+			t.Logf("Expected Error: %v; Got: %v", expectedError[i], err)
+			t.FailNow()
+		}
+
+		if expectedValues[i] != v {
+			t.Logf("Expected Value: %v; Got: %v", expectedValues[i], v)
+			t.FailNow()
+		}
+	}
 }
 
 // ----------------------- Benchmarks ------------------------ //

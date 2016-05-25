@@ -210,9 +210,12 @@ func (r *Radix) LookUp(s string) (interface{}, error) {
 // LookUpBytes will return the node matching
 func (r *Radix) LookUpBytes(bs []byte) (interface{}, error) {
 	node, err := r.sLookUp(bs)
-
 	if err != nil {
 		return nil, err
+	}
+
+	if !node.key {
+		return nil, ErrNoMatchFound
 	}
 
 	return node.Get(), err

@@ -90,7 +90,7 @@ func checkNodes(t *testing.T, nodes []*Radix, expectedText [][]byte, expectedVal
 
 		if n.key != expectedKeys[level] {
 			t.Fail()
-			t.Logf("Expected Key: %v; got: %v. Node: %s", expectedKeys[level], n.key, n.Path)
+			t.Logf("Expected Key: %v; Got: %v.", expectedKeys[level], n.key)
 		}
 
 		level = checkNodes(t, n.nodes, expectedText, expectedValue, expectedKeys, level+1)
