@@ -1,7 +1,11 @@
 # GoRadix [![Build Status](https://travis-ci.org/falmar/goradix.svg?branch=master)](https://travis-ci.org/falmar/goradix)
 
-Radix Tree implementation written in Golang. **Still under development**
+Radix Tree implementation written in Golang. **Still under development**.
 
+Thread Safe (branches):
+- master - Will be concurrent safe by default
+- ts - Concurrent Safe
+- nts - Not Concurrent Safe
 
 #### Radix Tree
 > In computer science, a radix tree (also radix trie or compact prefix tree) is a data structure that represents a space-optimized trie in which each node that is the only child is merged with its parent. - [Wikipedia](https://en.wikipedia.org/wiki/Radix_tree)
@@ -13,23 +17,15 @@ Radix Tree implementation written in Golang. **Still under development**
  - [Benchmarks](#benchmarks)
  - [License](#license)
 
-## Todo
+## TODO:
 
 
-| Code Task | Implementation | Test | Benchmark
-|---|:---:|:---:|:---:|
-| Insert | x | x |  |
-| LookUp | x | x |  |
-| AutoComplete | x | x |  |
-| Match |  |  |  |
-| Remove |  |  |  | |
-
-- Usage Examples:
-    * [x] Insert
-    * [x] LookUp
-    * [x] AutoComplete
-    * [ ] Match
-    * [ ] Remove
+| Code | Implementation | Test | Benchmark | Usage Examples |
+|---|:---:|:---:|:---:|:---:|
+| Insert | x | x | x | x |
+| LookUp | x | x | x | x |
+| AutoComplete | x | x |  | x |
+| Remove |  |  |  | | |
 
 
 ## Usage:
@@ -136,7 +132,72 @@ Under development
 Under development
 
 ## Benchmarks
-Under development
+
+### Insert
+
+**Go 1.6**
+
+```text
+BenchmarkInsertString-2      	 2000000	       809 ns/op	     238 B/op	       7 allocs/op
+BenchmarkInsertBytes-2       	 2000000	       730 ns/op	     227 B/op	       6 allocs/op
+
+```
+
+**Go 1.7**
+
+```text
+BenchmarkInsertString-2   	 2000000	       618 ns/op	     238 B/op	       7 allocs/op
+BenchmarkInsertBytes-2    	 3000000	       546 ns/op	     227 B/op	       6 allocs/op
+```
+
+### LookUp
+
+**Go 1.6**
+```text
+BenchmarkLookUpStringSingle-2	10000000	       138 ns/op	       0 B/op	       0 allocs/op
+BenchmarkLookUpStringRandom-2	 3000000	       389 ns/op	       0 B/op	       0 allocs/op
+BenchmarkLookUpBytesSingle-2 	10000000	       103 ns/op	       0 B/op	       0 allocs/op
+BenchmarkLookUpBytesRandom-2 	 5000000	       422 ns/op	       0 B/op	       0 allocs/op
+```
+
+**Go 1.7**
+
+```text
+BenchmarkLookUpStringSingle-2   	20000000	       175 ns/op	       0 B/op	       0 allocs/op
+BenchmarkLookUpStringRandom-2   	 5000000	       386 ns/op	       0 B/op	       0 allocs/op
+BenchmarkLookUpBytesSingle-2    	20000000	       174 ns/op	       0 B/op	       0 allocs/op
+BenchmarkLookUpBytesRandom-2    	 5000000	       364 ns/op	       0 B/op	       0 allocs/op
+
+```
+
+**Benchmark machine**
+
+```text
+Architecture:          x86_64
+CPU op-mode(s):        32-bit, 64-bit
+Byte Order:            Little Endian
+CPU(s):                2
+On-line CPU(s) list:   0,1
+Thread(s) per core:    1
+Core(s) per socket:    1
+Socket(s):             2
+NUMA node(s):          1
+Vendor ID:             GenuineIntel
+CPU family:            6
+Model:                 62
+Model name:            Intel(R) Xeon(R) CPU E5-2630L v2 @ 2.40GHz
+Stepping:              4
+CPU MHz:               2399.998
+BogoMIPS:              4799.99
+Virtualization:        VT-x
+Hypervisor vendor:     KVM
+Virtualization type:   full
+L1d cache:             32K
+L1i cache:             32K
+L2 cache:              256K
+L3 cache:              15360K
+NUMA node0 CPU(s):     0,1
+```
 
 ## License
 
