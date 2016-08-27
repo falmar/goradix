@@ -87,21 +87,3 @@ func TestLookUp(t *testing.T) {
 		}
 	}
 }
-
-// ----------------------- Benchmarks ------------------------ //
-
-func BenchmarkLookUp(b *testing.B) {
-	radix := New()
-	insertData(radix, sampleData2)
-
-	toLookUp := randomBytes()
-
-	for i := 0; i < b.N; i++ {
-		radix.LookUpBytes(toLookUp)
-	}
-}
-
-func randomBytes() []byte {
-	strings := sampleData2()
-	return []byte(strings[random(0, len(strings))])
-}
