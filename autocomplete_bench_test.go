@@ -8,44 +8,42 @@ import "testing"
 
 // ----------------------- Benchmarks ------------------------ //
 
-func BenchmarkLookUpStringSingle(b *testing.B) {
-	rx := New()
-	insertData(rx, sampleData2)
-
-	toLookUp := randomString(sampleData2())
-
-	for i := 0; i < b.N; i++ {
-		rx.LookUp(toLookUp)
-	}
-}
-
-func BenchmarkLookUpStringRandom(b *testing.B) {
+func BenchmarkAutocompleteStringLeftWords(b *testing.B) {
 	rx := New()
 	insertData(rx, sampleData2)
 	sd2 := sampleData2()
 
 	for i := 0; i < b.N; i++ {
-		rx.LookUp(randomString(sd2))
+		rx.AutoComplete(randomString(sd2), false)
 	}
 }
 
-func BenchmarkLookUpBytesSingle(b *testing.B) {
+func BenchmarkAutocompleteStringFullWords(b *testing.B) {
 	rx := New()
-	insertDataBytes(rx, sampleData3)
-
-	toLookUp := randomBytes(sampleData3())
+	insertData(rx, sampleData2)
+	sd2 := sampleData2()
 
 	for i := 0; i < b.N; i++ {
-		rx.LookUpBytes(toLookUp)
+		rx.AutoComplete(randomString(sd2), true)
 	}
 }
 
-func BenchmarkLookUpBytesRandom(b *testing.B) {
+func BenchmarkAutocompleteBytesLeftWords(b *testing.B) {
 	rx := New()
 	insertDataBytes(rx, sampleData3)
 	sd3 := sampleData3()
 
 	for i := 0; i < b.N; i++ {
-		rx.LookUpBytes(randomBytes(sd3))
+		rx.AutoCompleteBytes(randomBytes(sd3), false)
+	}
+}
+
+func BenchmarkAutocompleteBytesFullWords(b *testing.B) {
+	rx := New()
+	insertDataBytes(rx, sampleData3)
+	sd3 := sampleData3()
+
+	for i := 0; i < b.N; i++ {
+		rx.AutoCompleteBytes(randomBytes(sd3), true)
 	}
 }

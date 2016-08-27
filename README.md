@@ -134,8 +134,6 @@ Under development
 
 ##### Non Thread Safe
 
-
-
 ```text
 Go 1.6
 

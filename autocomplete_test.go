@@ -50,5 +50,4 @@ func TestAutoComplete(t *testing.T) {
 	test("slow", []string{"slowly"}, true)
 	test("te", []string{"test"}, true)
 	test("test", nil, true)
-
 }
