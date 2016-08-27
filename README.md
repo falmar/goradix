@@ -135,39 +135,80 @@ Under development
 
 ### Insert
 
-**Go 1.6**
+##### Non Thread Safe
+
+
 
 ```text
+Go 1.6
+
 BenchmarkInsertString-2      	 2000000	       809 ns/op	     238 B/op	       7 allocs/op
 BenchmarkInsertBytes-2       	 2000000	       730 ns/op	     227 B/op	       6 allocs/op
-
 ```
 
-**Go 1.7**
-
 ```text
+Go 1.7
+
 BenchmarkInsertString-2   	 2000000	       618 ns/op	     238 B/op	       7 allocs/op
 BenchmarkInsertBytes-2    	 3000000	       546 ns/op	     227 B/op	       6 allocs/op
 ```
 
+##### Thread Safe
+
+```text
+Go 1.6
+
+BenchmarkInsertString-2   	 1000000	      1222 ns/op	     316 B/op	       9 allocs/op
+BenchmarkInsertBytes-2    	 1000000	      1108 ns/op	     305 B/op	       8 allocs/op
+```
+
+```text
+Go 1.7
+
+BenchmarkInsertString-2   	 2000000	       798 ns/op	     316 B/op	       9 allocs/op
+BenchmarkInsertBytes-2    	 2000000	       760 ns/op	     305 B/op	       8 allocs/op
+```
+
 ### LookUp
 
-**Go 1.6**
+##### Non Thread Safe
+
 ```text
+Go 1.6
+
 BenchmarkLookUpStringSingle-2	10000000	       138 ns/op	       0 B/op	       0 allocs/op
 BenchmarkLookUpStringRandom-2	 3000000	       389 ns/op	       0 B/op	       0 allocs/op
 BenchmarkLookUpBytesSingle-2 	10000000	       103 ns/op	       0 B/op	       0 allocs/op
 BenchmarkLookUpBytesRandom-2 	 5000000	       422 ns/op	       0 B/op	       0 allocs/op
 ```
 
-**Go 1.7**
-
 ```text
+Go 1.7
+
 BenchmarkLookUpStringSingle-2   	20000000	       175 ns/op	       0 B/op	       0 allocs/op
 BenchmarkLookUpStringRandom-2   	 5000000	       386 ns/op	       0 B/op	       0 allocs/op
 BenchmarkLookUpBytesSingle-2    	20000000	       174 ns/op	       0 B/op	       0 allocs/op
 BenchmarkLookUpBytesRandom-2    	 5000000	       364 ns/op	       0 B/op	       0 allocs/op
+```
 
+##### Thread Safe
+
+```text
+Go 1.6
+
+BenchmarkLookUpStringSingle-2   	 1000000	      1087 ns/op	       0 B/op	       0 allocs/op
+BenchmarkLookUpStringRandom-2   	 1000000	      1852 ns/op	       0 B/op	       0 allocs/op
+BenchmarkLookUpBytesSingle-2    	 1000000	      1088 ns/op	       0 B/op	       0 allocs/op
+BenchmarkLookUpBytesRandom-2    	 1000000	      1667 ns/op	       0 B/op	       0 allocs/op
+```
+
+```text
+Go 1.7
+
+BenchmarkLookUpStringSingle-2   	 1000000	      1131 ns/op	       0 B/op	       0 allocs/op
+BenchmarkLookUpStringRandom-2   	 1000000	      1929 ns/op	       0 B/op	       0 allocs/op
+BenchmarkLookUpBytesSingle-2    	 1000000	      1173 ns/op	       0 B/op	       0 allocs/op
+BenchmarkLookUpBytesRandom-2    	 1000000	      1735 ns/op	       0 B/op	       0 allocs/op
 ```
 
 **Benchmark machine**
