@@ -13,37 +13,42 @@ func (r *Radix) LookUp(s string) (interface{}, error) {
 
 // LookUpBytes will return the node matching
 func (r *Radix) LookUpBytes(bs []byte) (interface{}, error) {
-	node, err := r.sLookUp(bs)
+	node, key, err := r.sLookUp(bs)
+
 	if err != nil {
 		return nil, err
 	}
 
-	if !node.key {
+	if !key {
 		return nil, ErrNoMatchFound
 	}
 
 	return node.get(), err
 }
 
-func (r *Radix) sLookUp(bs []byte) (*Radix, error) {
+func (r *Radix) sLookUp(bs []byte) (*Radix, bool, error) {
 	var traverseNode = r
+
+	traverseNode.mu.RLock()
+	defer traverseNode.mu.RUnlock()
+
 	lbs, matches, _ := traverseNode.match(bs)
 
 	// && ((!r.master && matches > 0) || r.master)
 	if matches == len(traverseNode.Path) {
 		if matches < len(bs) {
 			for _, n := range traverseNode.nodes {
-				if tn, err := n.sLookUp(lbs); tn != nil {
-					return tn, err
+				if tn, nkey, err := n.sLookUp(lbs); tn != nil {
+					return tn, nkey, err
 				}
 			}
 
 			// Do not jump back to parent node
-			return nil, ErrNoMatchFound
+			return nil, false, ErrNoMatchFound
 		}
 
-		return traverseNode, nil
+		return traverseNode, traverseNode.key, nil
 	}
 
-	return nil, ErrNoMatchFound
+	return nil, false, ErrNoMatchFound
 }

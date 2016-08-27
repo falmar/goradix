@@ -4,7 +4,10 @@
 
 package goradix
 
-import "errors"
+import (
+	"errors"
+	"sync"
+)
 
 // ErrNoMatchFound self explanatory
 var ErrNoMatchFound = errors.New("No Match Found")
@@ -17,11 +20,13 @@ type Radix struct {
 	master    bool
 	value     interface{}
 	leaf, key bool
+	mu        *sync.RWMutex
+	cs        bool
 }
 
 // New return a Radix Tree
 func New() *Radix {
-	return &Radix{master: true}
+	return &Radix{master: true, mu: &sync.RWMutex{}, cs: false}
 }
 
 // ----------------------- Basic ------------------------ //
@@ -32,6 +37,13 @@ func (r *Radix) set(v interface{}) {
 }
 
 // Get a value from Radix Tree node
+func (r *Radix) getNonBlocking() interface{} {
+	return r.value
+}
+
+// Get a value from Radix Tree node
 func (r *Radix) get() interface{} {
+	r.mu.RLock()
+	defer r.mu.RUnlock()
 	return r.value
 }

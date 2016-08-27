@@ -4,6 +4,8 @@
 
 package goradix
 
+import "sync"
+
 // ----------------------- Inserts ------------------------ //
 
 // Insert new string to the Radix Tree
@@ -19,11 +21,16 @@ func (r *Radix) InsertBytes(bs []byte, val ...interface{}) bool {
 		value = val[0]
 	}
 
+	r.mu.RLock()
+
 	if len(r.Path) == 0 && len(r.nodes) == 0 {
+		r.mu.RUnlock()
+		r.mu.Lock()
 		r.Path = bs
 		r.set(value)
 		r.leaf = true
 		r.key = true
+		r.mu.Unlock()
 		return true
 	}
 
@@ -37,6 +44,7 @@ func (r *Radix) InsertBytes(bs []byte, val ...interface{}) bool {
 	for i, v = range r.Path {
 		if i >= bsLen {
 			// No more matches to check
+			r.mu.RUnlock()
 			return false
 		}
 
@@ -50,42 +58,62 @@ func (r *Radix) InsertBytes(bs []byte, val ...interface{}) bool {
 			// If the byte string does not match anymore but had
 			// previous matches to the path then add the byte string
 			// as children node
+			r.mu.RUnlock()
+			r.mu.Lock()
+			var prs = true
+
 			if r.nodes == nil {
 				// If there is no existing nodes then slice the path
 				// until the last occurrence, add what is left of the path as
 				// children and also add the byte string.
-				r.addChildren(r.Path[i:], r.get(), nil, r.key)
+				r.addChildren(r.Path[i:], r.getNonBlocking(), nil, r.key)
 				r.key = false
 				r.set(nil)
 				r.addChildren(bs[i:], value, nil, true)
 				r.Path = r.Path[:i]
 			} else {
 				// Otherwise just add the new byte string as
-				r.pushChildren(bs, value, i, false)
+				prs = r.pushChildren(bs, value, i, false)
 			}
 
-			return true
+			r.mu.Unlock()
+
+			return prs
 		}
 	}
 
 	if match > 0 {
 		// Check if it already exists
 		if match == pathLen && pathLen == bsLen {
+			r.mu.RUnlock()
+			r.mu.Lock()
+
 			if value != nil {
 				r.set(value)
 			}
 			r.key = true
+
+			r.mu.Unlock()
+
 			return true
 		}
+
+		r.mu.RUnlock()
+		r.mu.Lock()
 
 		// If it matches all current node path and the byte string
 		for _, c := range r.nodes {
 			if c.InsertBytes(bs[i+1:], value) {
+				r.mu.Unlock()
+
 				return true
 			}
 		}
+
 		// no match found on nodes
 		r.addChildren(bs[i+1:], value, nil, true)
+
+		r.mu.Unlock()
 
 		return true
 	}
@@ -94,12 +122,22 @@ func (r *Radix) InsertBytes(bs []byte, val ...interface{}) bool {
 		// If there is NO match and the current node is the master Radix
 
 		if r.Path != nil {
-			r.pushChildren(bs, value, i, true)
-			return true
+			r.mu.RUnlock()
+			r.mu.Lock()
+
+			prs := r.pushChildren(bs, value, i, true)
+
+			r.mu.Unlock()
+
+			return prs
 		}
+
+		r.mu.RUnlock()
+		r.mu.Lock()
 
 		for _, c := range r.nodes {
 			if c.InsertBytes(bs, value) {
+				r.mu.Unlock()
 				return true
 			}
 		}
@@ -107,8 +145,12 @@ func (r *Radix) InsertBytes(bs []byte, val ...interface{}) bool {
 		// no match found on children nodes
 		// add new byte string as node
 		r.addChildren(bs, value, nil, true)
+
+		r.mu.Unlock()
 		return true
 	}
+
+	r.mu.RUnlock()
 
 	return false
 }
@@ -122,16 +164,29 @@ func (r *Radix) addChildren(bs []byte, v interface{}, c []*Radix, k bool) {
 		setLeaf = true
 	}
 
-	r.nodes = append(r.nodes, &Radix{Path: bs, nodes: c, parent: r, value: v, leaf: setLeaf, key: k})
+	r.nodes = append(r.nodes, &Radix{
+		Path:   bs,
+		nodes:  c,
+		parent: r,
+		value:  v,
+		leaf:   setLeaf,
+		key:    k,
+		mu:     &sync.RWMutex{},
+		cs:     r.cs,
+	})
 }
 
 // Push the current children nodes to a new node with the path
 // of what is left from slicing of the current path
 // and add the new byte string as children node
-func (r *Radix) pushChildren(bs []byte, v interface{}, i int, master bool) {
+func (r *Radix) pushChildren(bs []byte, v interface{}, i int, master bool) bool {
+	if (len(r.Path)) < i {
+		return false
+	}
+
 	nodes := r.nodes
 	r.nodes = nil
-	r.addChildren(r.Path[i:], r.get(), nodes, r.key)
+	r.addChildren(r.Path[i:], r.getNonBlocking(), nodes, r.key)
 	r.key = false
 	r.set(nil)
 
@@ -142,4 +197,6 @@ func (r *Radix) pushChildren(bs []byte, v interface{}, i int, master bool) {
 		r.Path = r.Path[:i]
 		r.addChildren(bs[i:], v, nil, true)
 	}
+
+	return true
 }

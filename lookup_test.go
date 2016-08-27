@@ -11,7 +11,7 @@ func TestSourceLookUp(t *testing.T) {
 	insertData(radix, sampleData)
 
 	checkLookUp := func(toLook, expected string, expectedLeaf bool, expectedError error) {
-		node, err := radix.sLookUp([]byte(toLook))
+		node, _, err := radix.sLookUp([]byte(toLook))
 
 		if err != expectedError {
 			t.Logf("Expected Error: %v; Got: %v. Node: %s", expectedError, err, node.Path)
