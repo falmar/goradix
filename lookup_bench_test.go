@@ -21,12 +21,15 @@ func BenchmarkLookUpStringSingle(b *testing.B) {
 
 func BenchmarkLookUpStringRandom(b *testing.B) {
 	rx := New()
-	insertData(rx, sampleData2)
+
 	sd2 := sampleData2()
 
 	for i := 0; i < b.N; i++ {
 		if i%20 == 0 {
+			b.StopTimer()
 			rx = New()
+			insertData(rx, sampleData2)
+			b.StartTimer()
 		}
 
 		rx.LookUp(randomString(sd2))
@@ -51,7 +54,10 @@ func BenchmarkLookUpBytesRandom(b *testing.B) {
 
 	for i := 0; i < b.N; i++ {
 		if i%20 == 0 {
+			b.StopTimer()
 			rx = New()
+			insertDataBytes(rx, sampleData3)
+			b.StartTimer()
 		}
 
 		rx.LookUpBytes(randomBytes(sd3))
