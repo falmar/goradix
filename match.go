@@ -22,6 +22,7 @@ func (r Radix) match(bs []byte) ([]byte, int, []byte) {
 		} else if bs[i] != v {
 			break
 		}
+
 		i++
 	}
 
