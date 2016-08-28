@@ -7,7 +7,7 @@ package main
 import "github.com/falmar/goradix"
 
 func main() {
-	radix := goradix.New()
+	radix := goradix.New(false)
 
 	radix.Insert("romanus")
 	radix.Insert("romane")

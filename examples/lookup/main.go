@@ -11,7 +11,7 @@ import (
 )
 
 func main() {
-	radix := goradix.New()
+	radix := goradix.New(false)
 	radix.Insert("romanus", 1)
 	radix.Insert("romane", 100)
 	radix.Insert("romulus", 1000)

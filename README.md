@@ -2,10 +2,9 @@
 
 Radix Tree implementation written in Golang. **Still under development**.
 
-Thread Safe (branches):
-- master - Will be concurrent safe by default
-- ts - Concurrent Safe
-- nts - Not Concurrent Safe
+Thread Safety is optional. You will need to pass a boolean value when creating the Radix Tree
+- true: thread safe
+- false: non thread safe
 
 #### Radix Tree
 > In computer science, a radix tree (also radix trie or compact prefix tree) is a data structure that represents a space-optimized trie in which each node that is the only child is merged with its parent. - [Wikipedia](https://en.wikipedia.org/wiki/Radix_tree)
@@ -46,7 +45,7 @@ package main
 import "github.com/falmar/goradix"
 
 func main() {
-	radix := goradix.New()
+	radix := goradix.New(false)
 
   // Simple string insert
 	radix.Insert("romanus")
@@ -71,7 +70,7 @@ import (
 )
 
 func main() {
-	radix := goradix.New()
+	radix := goradix.New(false)
 	radix.Insert("romanus", 1)
 	radix.Insert("romane", 100)
 	radix.Insert("romulus", 1000)
@@ -102,7 +101,7 @@ import (
 )
 
 func main() {
-	radix := goradix.New()
+	radix := goradix.New(false)
 
 	radix.Insert("romanus")
 	radix.Insert("romane")
@@ -129,7 +128,7 @@ import (
 )
 
 func main() {
-	radix := goradix.New()
+	radix := goradix.New(false)
 	radix.Insert("romanus", 1)
 	radix.Insert("romane", 100)
 	radix.Insert("romulus", 1000)
