@@ -15,11 +15,11 @@ func TestCC(t *testing.T) {
 
 	wg := &sync.WaitGroup{}
 
-	for z := 0; z < 100; z++ {
+	for z := 0; z < 20; z++ {
 
 		radix = New()
 
-		for f := 0; f < 50; f++ {
+		for f := 0; f < 20; f++ {
 			wg.Add(1)
 			go func(r *Radix, w *sync.WaitGroup) {
 				for _, s := range sampleData2() {
@@ -51,6 +51,15 @@ func TestCC(t *testing.T) {
 			go func(r *Radix, w *sync.WaitGroup) {
 				for _, s := range sampleData() {
 					r.LookUp(s)
+				}
+
+				w.Done()
+			}(radix, wg)
+
+			wg.Add(1)
+			go func(r *Radix, w *sync.WaitGroup) {
+				for _, s := range sampleData() {
+					r.Remove(s)
 				}
 
 				w.Done()
