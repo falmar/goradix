@@ -20,7 +20,7 @@ func (r *Radix) RemoveBytes(bs []byte) bool {
 // return (succeed, delete child)
 
 func (r *Radix) cRemove(bs []byte) (bool, bool) {
-	r.mu.Lock()
+	r.lock()
 
 	lbs, matches, _ := r.match(bs)
 
@@ -32,13 +32,13 @@ func (r *Radix) cRemove(bs []byte) (bool, bool) {
 						r.removeChild(i)
 					}
 
-					r.mu.Unlock()
+					r.unlock()
 
 					return sd, false
 				}
 			}
 
-			r.mu.Unlock()
+			r.unlock()
 
 			return false, false
 		}
@@ -51,12 +51,12 @@ func (r *Radix) cRemove(bs []byte) (bool, bool) {
 			r.mergeChild()
 		}
 
-		r.mu.Unlock()
+		r.unlock()
 
 		return true, isLeft
 	}
 
-	r.mu.Unlock()
+	r.unlock()
 
 	return false, false
 }
