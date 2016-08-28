@@ -8,25 +8,7 @@ import "testing"
 
 // ----------------------- Benchmarks ------------------------ //
 
-func BenchmarkInsertString(b *testing.B) {
-	rx := New(false)
-	tn := 0
-	sd2 := sampleData2()
-	sdLen := len(sd2) - 1
-
-	for i := 0; i < b.N; i++ {
-		if tn == sdLen {
-			rx = New(false)
-			tn = 0
-		}
-
-		rx.Insert(sd2[tn], i)
-
-		tn++
-	}
-}
-
-func BenchmarkInsertBytes(b *testing.B) {
+func BenchmarkInsertNTS(b *testing.B) {
 	rx := New(false)
 	tn := 0
 	sd2 := sampleData3()
@@ -35,6 +17,24 @@ func BenchmarkInsertBytes(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		if tn == sdLen {
 			rx = New(false)
+			tn = 0
+		}
+
+		rx.InsertBytes(sd2[tn], i)
+
+		tn++
+	}
+}
+
+func BenchmarkInsertTS(b *testing.B) {
+	rx := New(true)
+	tn := 0
+	sd2 := sampleData3()
+	sdLen := len(sd2) - 1
+
+	for i := 0; i < b.N; i++ {
+		if tn == sdLen {
+			rx = New(true)
 			tn = 0
 		}
 
