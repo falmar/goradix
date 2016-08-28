@@ -8,7 +8,7 @@ import "testing"
 
 // ----------------------- Benchmarks ------------------------ //
 
-func BenchmarkRemove(b *testing.B) {
+func BenchmarkRemoveNTS(b *testing.B) {
 	rx := New(false)
 	insertDataBytes(rx, sampleData3)
 	sd3 := sampleData3()
@@ -18,6 +18,25 @@ func BenchmarkRemove(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		if tn == sdLen {
 			rx = New(false)
+			insertDataBytes(rx, sampleData3)
+		}
+
+		rx.RemoveBytes(randomBytes(sd3))
+
+		tn++
+	}
+}
+
+func BenchmarkRemoveTS(b *testing.B) {
+	rx := New(true)
+	insertDataBytes(rx, sampleData3)
+	sd3 := sampleData3()
+	sdLen := len(sd3)
+	tn := 0
+
+	for i := 0; i < b.N; i++ {
+		if tn == sdLen {
+			rx = New(true)
 			insertDataBytes(rx, sampleData3)
 		}
 
