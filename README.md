@@ -1,6 +1,6 @@
 # GoRadix [![Build Status](https://travis-ci.org/falmar/goradix.svg?branch=master)](https://travis-ci.org/falmar/goradix) [![Codecov](https://img.shields.io/codecov/c/github/falmar/goradix.svg)]()
 
-Radix Tree implementation written in Golang. **Still under development**.
+Radix Tree implementation written in Golang.
 
 Thread Safety is optional. You will need to pass a boolean value when creating the Radix Tree
 - true: thread safe
@@ -15,17 +15,6 @@ Thread Safety is optional. You will need to pass a boolean value when creating t
  - [Usage](#usage)
  - [Benchmarks](#benchmarks)
  - [License](#license)
-
-## TODO:
-
-
-| Code | Implementation | Test | Benchmark | Usage Examples |
-|---|:---:|:---:|:---:|:---:|
-| Insert | x | x | x | x |
-| LookUp | x | x | x | x |
-| Remove | x | x | | x |
-| AutoComplete | x | x | x | x |
-
 
 ## Usage:
 
@@ -220,7 +209,10 @@ L3 cache:              15360K
 NUMA node0 CPU(s):     0,1
 ```
 
+## Contribution
+
+Any contribution is more than welcome.
+
 ## License
 
-Copyright 2016 David Lavieri. All rights reserved.
-Use of this source code is governed by a MIT License that can be found in the LICENSE file.
+MIT.
