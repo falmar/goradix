@@ -165,14 +165,13 @@ func (r *Radix) addChildren(bs []byte, v interface{}, c []*Radix, k bool) {
 	}
 
 	r.nodes = append(r.nodes, &Radix{
-		Path:   bs,
-		nodes:  c,
-		parent: r,
-		value:  v,
-		leaf:   setLeaf,
-		key:    k,
-		mu:     &sync.RWMutex{},
-		ts:     r.ts,
+		Path:  bs,
+		nodes: c,
+		value: v,
+		leaf:  setLeaf,
+		key:   k,
+		mu:    &sync.RWMutex{},
+		ts:    r.ts,
 	})
 }
 

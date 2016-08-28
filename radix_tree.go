@@ -16,7 +16,6 @@ var ErrNoMatchFound = errors.New("No Match Found")
 type Radix struct {
 	Path      []byte
 	nodes     []*Radix
-	parent    *Radix
 	master    bool
 	value     interface{}
 	leaf, key bool
