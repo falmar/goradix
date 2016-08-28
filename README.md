@@ -1,4 +1,4 @@
-# GoRadix [![Build Status](https://travis-ci.org/falmar/goradix.svg?branch=master)](https://travis-ci.org/falmar/goradix)
+# GoRadix [![Build Status](https://travis-ci.org/falmar/goradix.svg?branch=master)](https://travis-ci.org/falmar/goradix) [![Codecov](https://img.shields.io/codecov/c/github/falmar/goradix.svg)]()
 
 Radix Tree implementation written in Golang. **Still under development**.
 
@@ -24,8 +24,8 @@ Thread Safe (branches):
 |---|:---:|:---:|:---:|:---:|
 | Insert | x | x | x | x |
 | LookUp | x | x | x | x |
-| AutoComplete | x | x |  | x |
-| Remove |  |  |  | | |
+| Remove | x | x | | x |
+| AutoComplete | x | x | x | x |
 
 
 ## Usage:
@@ -87,6 +87,33 @@ func main() {
 }
 ```
 
+### Remove
+```go
+// string
+func (r Radix) Remove(s string) (bool) {...}
+```
+```go
+package main
+
+import (
+	"fmt"
+
+	"github.com/falmar/goradix"
+)
+
+func main() {
+	radix := goradix.New()
+
+	radix.Insert("romanus")
+	radix.Insert("romane")
+	radix.Insert("romulus")
+
+	succeed := radix.Remove("romulus")
+
+	fmt.Println(succeed) // true
+}
+```
+
 ### AutoComplete
 ```go
 // string, bool required
@@ -125,12 +152,9 @@ func main() {
 }
 ```
 
-### Remove
-Under development
+
 
 ## Benchmarks
-
-### Insert
 
 ##### Non Thread Safe
 
@@ -139,37 +163,6 @@ Go 1.6
 
 BenchmarkInsertString-2      	 2000000	       809 ns/op	     238 B/op	       7 allocs/op
 BenchmarkInsertBytes-2       	 2000000	       730 ns/op	     227 B/op	       6 allocs/op
-```
-
-```text
-Go 1.7
-
-BenchmarkInsertString-2   	 2000000	       618 ns/op	     238 B/op	       7 allocs/op
-BenchmarkInsertBytes-2    	 3000000	       546 ns/op	     227 B/op	       6 allocs/op
-```
-
-##### Thread Safe
-
-```text
-Go 1.6
-
-BenchmarkInsertString-2   	 1000000	      1222 ns/op	     316 B/op	       9 allocs/op
-BenchmarkInsertBytes-2    	 1000000	      1108 ns/op	     305 B/op	       8 allocs/op
-```
-
-```text
-Go 1.7
-
-BenchmarkInsertString-2   	 2000000	       798 ns/op	     316 B/op	       9 allocs/op
-BenchmarkInsertBytes-2    	 2000000	       760 ns/op	     305 B/op	       8 allocs/op
-```
-
-### LookUp
-
-##### Non Thread Safe
-
-```text
-Go 1.6
 
 BenchmarkLookUpStringSingle-2	10000000	       138 ns/op	       0 B/op	       0 allocs/op
 BenchmarkLookUpStringRandom-2	 3000000	       389 ns/op	       0 B/op	       0 allocs/op
@@ -179,6 +172,9 @@ BenchmarkLookUpBytesRandom-2 	 5000000	       422 ns/op	       0 B/op	       0 a
 
 ```text
 Go 1.7
+
+BenchmarkInsertString-2   	 2000000	       618 ns/op	     238 B/op	       7 allocs/op
+BenchmarkInsertBytes-2    	 3000000	       546 ns/op	     227 B/op	       6 allocs/op
 
 BenchmarkLookUpStringSingle-2   	20000000	       175 ns/op	       0 B/op	       0 allocs/op
 BenchmarkLookUpStringRandom-2   	 5000000	       386 ns/op	       0 B/op	       0 allocs/op
@@ -191,6 +187,9 @@ BenchmarkLookUpBytesRandom-2    	 5000000	       364 ns/op	       0 B/op	       
 ```text
 Go 1.6
 
+BenchmarkInsertString-2   	 1000000	      1222 ns/op	     316 B/op	       9 allocs/op
+BenchmarkInsertBytes-2    	 1000000	      1108 ns/op	     305 B/op	       8 allocs/op
+
 BenchmarkLookUpStringSingle-2   	 1000000	      1087 ns/op	       0 B/op	       0 allocs/op
 BenchmarkLookUpStringRandom-2   	 1000000	      1852 ns/op	       0 B/op	       0 allocs/op
 BenchmarkLookUpBytesSingle-2    	 1000000	      1088 ns/op	       0 B/op	       0 allocs/op
@@ -199,6 +198,9 @@ BenchmarkLookUpBytesRandom-2    	 1000000	      1667 ns/op	       0 B/op	       
 
 ```text
 Go 1.7
+
+BenchmarkInsertString-2   	 2000000	       798 ns/op	     316 B/op	       9 allocs/op
+BenchmarkInsertBytes-2    	 2000000	       760 ns/op	     305 B/op	       8 allocs/op
 
 BenchmarkLookUpStringSingle-2   	 1000000	      1131 ns/op	       0 B/op	       0 allocs/op
 BenchmarkLookUpStringRandom-2   	 1000000	      1929 ns/op	       0 B/op	       0 allocs/op
