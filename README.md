@@ -160,25 +160,17 @@ func main() {
 ```text
 Go 1.6
 
-BenchmarkInsertString-2      	 2000000	       809 ns/op	     238 B/op	       7 allocs/op
-BenchmarkInsertBytes-2       	 2000000	       730 ns/op	     227 B/op	       6 allocs/op
-
-BenchmarkLookUpStringSingle-2	10000000	       138 ns/op	       0 B/op	       0 allocs/op
-BenchmarkLookUpStringRandom-2	 3000000	       389 ns/op	       0 B/op	       0 allocs/op
-BenchmarkLookUpBytesSingle-2 	10000000	       103 ns/op	       0 B/op	       0 allocs/op
-BenchmarkLookUpBytesRandom-2 	 5000000	       422 ns/op	       0 B/op	       0 allocs/op
+BenchmarkInsertNTS-2	 1000000	      1736 ns/op	     279 B/op	       8 allocs/op
+BenchmarkLookUpNTS-2	 2000000	       628 ns/op	       0 B/op	       0 allocs/op
+BenchmarkRemoveNTS-2	 2000000	       562 ns/op	       0 B/op	       0 allocs/op
 ```
 
 ```text
 Go 1.7
 
-BenchmarkInsertString-2   	 2000000	       618 ns/op	     238 B/op	       7 allocs/op
-BenchmarkInsertBytes-2    	 3000000	       546 ns/op	     227 B/op	       6 allocs/op
-
-BenchmarkLookUpStringSingle-2   	20000000	       175 ns/op	       0 B/op	       0 allocs/op
-BenchmarkLookUpStringRandom-2   	 5000000	       386 ns/op	       0 B/op	       0 allocs/op
-BenchmarkLookUpBytesSingle-2    	20000000	       174 ns/op	       0 B/op	       0 allocs/op
-BenchmarkLookUpBytesRandom-2    	 5000000	       364 ns/op	       0 B/op	       0 allocs/op
+BenchmarkInsertNTS-2   	 2000000	      1056 ns/op	     279 B/op	       8 allocs/op
+BenchmarkLookUpNTS-2   	 3000000	       435 ns/op	       0 B/op	       0 allocs/op
+BenchmarkRemoveNTS-2   	 3000000	       539 ns/op	       0 B/op	       0 allocs/op
 ```
 
 ##### Thread Safe
@@ -186,25 +178,17 @@ BenchmarkLookUpBytesRandom-2    	 5000000	       364 ns/op	       0 B/op	       
 ```text
 Go 1.6
 
-BenchmarkInsertString-2   	 1000000	      1222 ns/op	     316 B/op	       9 allocs/op
-BenchmarkInsertBytes-2    	 1000000	      1108 ns/op	     305 B/op	       8 allocs/op
-
-BenchmarkLookUpStringSingle-2   	 1000000	      1087 ns/op	       0 B/op	       0 allocs/op
-BenchmarkLookUpStringRandom-2   	 1000000	      1852 ns/op	       0 B/op	       0 allocs/op
-BenchmarkLookUpBytesSingle-2    	 1000000	      1088 ns/op	       0 B/op	       0 allocs/op
-BenchmarkLookUpBytesRandom-2    	 1000000	      1667 ns/op	       0 B/op	       0 allocs/op
+BenchmarkInsertTS-2	 1000000	      1619 ns/op	     279 B/op	       8 allocs/op
+BenchmarkLookUpTS-2	 1000000	      1018 ns/op	       0 B/op	       0 allocs/op
+BenchmarkRemoveTS-2	 1000000	      1181 ns/op	       0 B/op	       0 allocs/op
 ```
 
 ```text
 Go 1.7
 
-BenchmarkInsertString-2   	 2000000	       798 ns/op	     316 B/op	       9 allocs/op
-BenchmarkInsertBytes-2    	 2000000	       760 ns/op	     305 B/op	       8 allocs/op
-
-BenchmarkLookUpStringSingle-2   	 1000000	      1131 ns/op	       0 B/op	       0 allocs/op
-BenchmarkLookUpStringRandom-2   	 1000000	      1929 ns/op	       0 B/op	       0 allocs/op
-BenchmarkLookUpBytesSingle-2    	 1000000	      1173 ns/op	       0 B/op	       0 allocs/op
-BenchmarkLookUpBytesRandom-2    	 1000000	      1735 ns/op	       0 B/op	       0 allocs/op
+BenchmarkInsertTS-2   	 1000000	      1018 ns/op	     279 B/op	       8 allocs/op
+BenchmarkLookUpTS-2   	 3000000	       553 ns/op	       0 B/op	       0 allocs/op
+BenchmarkRemoveTS-2   	 2000000	       651 ns/op	       0 B/op	       0 allocs/op
 ```
 
 **Benchmark machine**
