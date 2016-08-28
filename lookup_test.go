@@ -7,7 +7,7 @@ package goradix
 import "testing"
 
 func TestSourceLookUp(t *testing.T) {
-	radix := New()
+	radix := New(false)
 	insertData(radix, sampleData)
 
 	checkLookUp := func(toLook, expected string, expectedLeaf bool, expectedError error) {
@@ -66,7 +66,7 @@ func TestSourceLookUp(t *testing.T) {
 }
 
 func TestLookUp(t *testing.T) {
-	radix := New()
+	radix := New(false)
 	insertData(radix, sampleData)
 
 	toLookUp := []string{"t", "test", "toast", "toasting", "slowly"}

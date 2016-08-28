@@ -9,14 +9,14 @@ import "testing"
 // ----------------------- Benchmarks ------------------------ //
 
 func BenchmarkInsertString(b *testing.B) {
-	rx := New()
+	rx := New(false)
 	tn := 0
 	sd2 := sampleData2()
 	sdLen := len(sd2) - 1
 
 	for i := 0; i < b.N; i++ {
 		if tn == sdLen {
-			rx = New()
+			rx = New(false)
 			tn = 0
 		}
 
@@ -27,14 +27,14 @@ func BenchmarkInsertString(b *testing.B) {
 }
 
 func BenchmarkInsertBytes(b *testing.B) {
-	rx := New()
+	rx := New(false)
 	tn := 0
 	sd2 := sampleData3()
 	sdLen := len(sd2) - 1
 
 	for i := 0; i < b.N; i++ {
 		if tn == sdLen {
-			rx = New()
+			rx = New(false)
 			tn = 0
 		}
 

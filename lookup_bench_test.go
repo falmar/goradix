@@ -9,7 +9,7 @@ import "testing"
 // ----------------------- Benchmarks ------------------------ //
 
 func BenchmarkLookUpStringSingle(b *testing.B) {
-	rx := New()
+	rx := New(false)
 	insertData(rx, sampleData2)
 
 	toLookUp := randomString(sampleData2())
@@ -20,7 +20,7 @@ func BenchmarkLookUpStringSingle(b *testing.B) {
 }
 
 func BenchmarkLookUpStringRandom(b *testing.B) {
-	rx := New()
+	rx := New(false)
 	insertData(rx, sampleData2)
 	sd2 := sampleData2()
 
@@ -30,7 +30,7 @@ func BenchmarkLookUpStringRandom(b *testing.B) {
 }
 
 func BenchmarkLookUpBytesSingle(b *testing.B) {
-	rx := New()
+	rx := New(false)
 	insertDataBytes(rx, sampleData3)
 
 	toLookUp := randomBytes(sampleData3())
@@ -41,7 +41,7 @@ func BenchmarkLookUpBytesSingle(b *testing.B) {
 }
 
 func BenchmarkLookUpBytesRandom(b *testing.B) {
-	rx := New()
+	rx := New(false)
 	insertDataBytes(rx, sampleData3)
 	sd3 := sampleData3()
 

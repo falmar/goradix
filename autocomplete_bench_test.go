@@ -9,7 +9,7 @@ import "testing"
 // ----------------------- Benchmarks ------------------------ //
 
 func BenchmarkAutocompleteStringLeftWords(b *testing.B) {
-	rx := New()
+	rx := New(false)
 	insertData(rx, sampleData2)
 	sd2 := sampleData2()
 
@@ -19,7 +19,7 @@ func BenchmarkAutocompleteStringLeftWords(b *testing.B) {
 }
 
 func BenchmarkAutocompleteStringFullWords(b *testing.B) {
-	rx := New()
+	rx := New(false)
 	insertData(rx, sampleData2)
 	sd2 := sampleData2()
 
@@ -29,7 +29,7 @@ func BenchmarkAutocompleteStringFullWords(b *testing.B) {
 }
 
 func BenchmarkAutocompleteBytesLeftWords(b *testing.B) {
-	rx := New()
+	rx := New(false)
 	insertDataBytes(rx, sampleData3)
 	sd3 := sampleData3()
 
@@ -39,7 +39,7 @@ func BenchmarkAutocompleteBytesLeftWords(b *testing.B) {
 }
 
 func BenchmarkAutocompleteBytesFullWords(b *testing.B) {
-	rx := New()
+	rx := New(false)
 	insertDataBytes(rx, sampleData3)
 	sd3 := sampleData3()
 

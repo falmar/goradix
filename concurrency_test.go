@@ -17,7 +17,7 @@ func TestCC(t *testing.T) {
 
 	for z := 0; z < 20; z++ {
 
-		radix = New()
+		radix = New(true)
 
 		for f := 0; f < 20; f++ {
 			wg.Add(1)
@@ -59,6 +59,15 @@ func TestCC(t *testing.T) {
 			wg.Add(1)
 			go func(r *Radix, w *sync.WaitGroup) {
 				for _, s := range sampleData() {
+					r.Remove(s)
+				}
+
+				w.Done()
+			}(radix, wg)
+
+			wg.Add(1)
+			go func(r *Radix, w *sync.WaitGroup) {
+				for _, s := range sampleData2() {
 					r.Remove(s)
 				}
 

@@ -25,8 +25,9 @@ type Radix struct {
 }
 
 // New return a Radix Tree
-func New() *Radix {
-	return &Radix{master: true, mu: &sync.RWMutex{}, cs: false}
+// cs bool - Concurrent Safe
+func New(cs bool) *Radix {
+	return &Radix{master: true, mu: &sync.RWMutex{}, cs: cs}
 }
 
 // ----------------------- Basic ------------------------ //
@@ -44,6 +45,34 @@ func (r *Radix) getNonBlocking() interface{} {
 // Get a value from Radix Tree node
 func (r *Radix) get() interface{} {
 	r.mu.RLock()
-	defer r.mu.RUnlock()
-	return r.value
+	v := r.value
+	r.mu.RUnlock()
+	return v
+}
+
+// ----------------------- Locks ------------------------ //
+// in order to make concurrent safety optional
+
+func (r *Radix) lock() {
+	if r.cs {
+		r.mu.Lock()
+	}
+}
+
+func (r *Radix) unlock() {
+	if r.cs {
+		r.mu.Unlock()
+	}
+}
+
+func (r *Radix) rLock() {
+	if r.cs {
+		r.mu.RLock()
+	}
+}
+
+func (r *Radix) rUnlock() {
+	if r.cs {
+		r.mu.RUnlock()
+	}
 }

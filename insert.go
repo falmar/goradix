@@ -21,16 +21,16 @@ func (r *Radix) InsertBytes(bs []byte, val ...interface{}) bool {
 		value = val[0]
 	}
 
-	r.mu.RLock()
+	r.rLock()
 
 	if len(r.Path) == 0 && len(r.nodes) == 0 {
-		r.mu.RUnlock()
-		r.mu.Lock()
+		r.rUnlock()
+		r.lock()
 		r.Path = bs
 		r.set(value)
 		r.leaf = true
 		r.key = true
-		r.mu.Unlock()
+		r.unlock()
 		return true
 	}
 
@@ -44,7 +44,7 @@ func (r *Radix) InsertBytes(bs []byte, val ...interface{}) bool {
 	for i, v = range r.Path {
 		if i >= bsLen {
 			// No more matches to check
-			r.mu.RUnlock()
+			r.rUnlock()
 			return false
 		}
 
@@ -58,8 +58,8 @@ func (r *Radix) InsertBytes(bs []byte, val ...interface{}) bool {
 			// If the byte string does not match anymore but had
 			// previous matches to the path then add the byte string
 			// as children node
-			r.mu.RUnlock()
-			r.mu.Lock()
+			r.rUnlock()
+			r.lock()
 			var prs = true
 
 			if r.nodes == nil {
@@ -76,7 +76,7 @@ func (r *Radix) InsertBytes(bs []byte, val ...interface{}) bool {
 				prs = r.pushChildren(bs, value, i, false)
 			}
 
-			r.mu.Unlock()
+			r.unlock()
 
 			return prs
 		}
@@ -85,26 +85,26 @@ func (r *Radix) InsertBytes(bs []byte, val ...interface{}) bool {
 	if match > 0 {
 		// Check if it already exists
 		if match == pathLen && pathLen == bsLen {
-			r.mu.RUnlock()
-			r.mu.Lock()
+			r.rUnlock()
+			r.lock()
 
 			if value != nil {
 				r.set(value)
 			}
 			r.key = true
 
-			r.mu.Unlock()
+			r.unlock()
 
 			return true
 		}
 
-		r.mu.RUnlock()
-		r.mu.Lock()
+		r.rUnlock()
+		r.lock()
 
 		// If it matches all current node path and the byte string
 		for _, c := range r.nodes {
 			if c.InsertBytes(bs[i+1:], value) {
-				r.mu.Unlock()
+				r.unlock()
 
 				return true
 			}
@@ -113,7 +113,7 @@ func (r *Radix) InsertBytes(bs []byte, val ...interface{}) bool {
 		// no match found on nodes
 		r.addChildren(bs[i+1:], value, nil, true)
 
-		r.mu.Unlock()
+		r.unlock()
 
 		return true
 	}
@@ -122,22 +122,22 @@ func (r *Radix) InsertBytes(bs []byte, val ...interface{}) bool {
 		// If there is NO match and the current node is the master Radix
 
 		if r.Path != nil {
-			r.mu.RUnlock()
-			r.mu.Lock()
+			r.rUnlock()
+			r.lock()
 
 			prs := r.pushChildren(bs, value, i, true)
 
-			r.mu.Unlock()
+			r.unlock()
 
 			return prs
 		}
 
-		r.mu.RUnlock()
-		r.mu.Lock()
+		r.rUnlock()
+		r.lock()
 
 		for _, c := range r.nodes {
 			if c.InsertBytes(bs, value) {
-				r.mu.Unlock()
+				r.unlock()
 				return true
 			}
 		}
@@ -146,11 +146,11 @@ func (r *Radix) InsertBytes(bs []byte, val ...interface{}) bool {
 		// add new byte string as node
 		r.addChildren(bs, value, nil, true)
 
-		r.mu.Unlock()
+		r.unlock()
 		return true
 	}
 
-	r.mu.RUnlock()
+	r.rUnlock()
 
 	return false
 }

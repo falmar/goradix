@@ -10,7 +10,7 @@ func TestSourceMatch(t *testing.T) {
 
 	match := func(t *testing.T, insert []string, matchString, lbsMatch, plbsMatch []byte, matchesInt int) {
 		//Complex N. 1
-		radix := New()
+		radix := New(false)
 
 		for _, v := range insert {
 			radix.Insert(v)

@@ -7,7 +7,7 @@ package goradix
 import "testing"
 
 func TestAutoComplete(t *testing.T) {
-	radix := New()
+	radix := New(false)
 	insertData(radix, sampleData)
 
 	test := func(toLook string, expectedData []string, wholeWord bool) {

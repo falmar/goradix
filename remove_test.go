@@ -7,7 +7,7 @@ package goradix
 import "testing"
 
 func TestRemove(t *testing.T) {
-	rx := New()
+	rx := New(false)
 	insertData(rx, sampleData)
 
 	rx.Remove("slow")
@@ -22,7 +22,7 @@ func TestRemove(t *testing.T) {
 }
 
 func TestRemoveChild(t *testing.T) {
-	rx := New()
+	rx := New(false)
 	insertData(rx, sampleData)
 
 	rx.Remove("test")
@@ -33,7 +33,7 @@ func TestRemoveChild(t *testing.T) {
 }
 
 func TestRemoveChildMerge(t *testing.T) {
-	rx := New()
+	rx := New(false)
 	insertData(rx, sampleData)
 
 	rx.Remove("slow")

@@ -7,7 +7,7 @@ package goradix
 import "testing"
 
 func TestInsert(t *testing.T) {
-	radix := New()
+	radix := New(false)
 	radix.Insert("test", 1)
 
 	expectedBytes := []byte("test")
@@ -30,7 +30,7 @@ func TestInsert(t *testing.T) {
 }
 
 func TestInsertSeparation(t *testing.T) {
-	radix := New()
+	radix := New(false)
 	radix.Insert("toaster", "value1")
 	radix.Insert("toasting", "value2")
 	radix.Insert("toast", "value3")
@@ -109,7 +109,7 @@ func checkNodes(t *testing.T, nodes []*Radix, expectedText [][]byte, expectedVal
 }
 
 func TestInsertSeparationComplex(t *testing.T) {
-	radix := New()
+	radix := New(false)
 	insertData(radix, sampleData)
 
 	expectedTexts := [][]byte{

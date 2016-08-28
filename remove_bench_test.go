@@ -9,7 +9,7 @@ import "testing"
 // ----------------------- Benchmarks ------------------------ //
 
 func BenchmarkRemove(b *testing.B) {
-	rx := New()
+	rx := New(false)
 	insertDataBytes(rx, sampleData3)
 	sd3 := sampleData3()
 	sdLen := len(sd3)
@@ -17,7 +17,7 @@ func BenchmarkRemove(b *testing.B) {
 
 	for i := 0; i < b.N; i++ {
 		if tn == sdLen {
-			rx = New()
+			rx = New(false)
 			insertDataBytes(rx, sampleData3)
 		}
 
