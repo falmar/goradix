@@ -172,7 +172,7 @@ func (r *Radix) addChildren(bs []byte, v interface{}, c []*Radix, k bool) {
 		leaf:   setLeaf,
 		key:    k,
 		mu:     &sync.RWMutex{},
-		cs:     r.cs,
+		ts:     r.ts,
 	})
 }
 

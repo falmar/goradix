@@ -21,13 +21,13 @@ type Radix struct {
 	value     interface{}
 	leaf, key bool
 	mu        *sync.RWMutex
-	cs        bool
+	ts        bool
 }
 
 // New return a Radix Tree
-// cs bool - Concurrent Safe
-func New(cs bool) *Radix {
-	return &Radix{master: true, mu: &sync.RWMutex{}, cs: cs}
+// ts bool - Thread Safe
+func New(ts bool) *Radix {
+	return &Radix{master: true, mu: &sync.RWMutex{}, ts: ts}
 }
 
 // ----------------------- Basic ------------------------ //
@@ -51,28 +51,28 @@ func (r *Radix) get() interface{} {
 }
 
 // ----------------------- Locks ------------------------ //
-// in order to make concurrent safety optional
+// in order to make thread safety optional
 
 func (r *Radix) lock() {
-	if r.cs {
+	if r.ts {
 		r.mu.Lock()
 	}
 }
 
 func (r *Radix) unlock() {
-	if r.cs {
+	if r.ts {
 		r.mu.Unlock()
 	}
 }
 
 func (r *Radix) rLock() {
-	if r.cs {
+	if r.ts {
 		r.mu.RLock()
 	}
 }
 
 func (r *Radix) rUnlock() {
-	if r.cs {
+	if r.ts {
 		r.mu.RUnlock()
 	}
 }
