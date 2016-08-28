@@ -8,40 +8,18 @@ import "testing"
 
 // ----------------------- Benchmarks ------------------------ //
 
-func BenchmarkLookUpStringSingle(b *testing.B) {
-	rx := New(false)
-	insertData(rx, sampleData2)
-
-	toLookUp := randomString(sampleData2())
-
-	for i := 0; i < b.N; i++ {
-		rx.LookUp(toLookUp)
-	}
-}
-
-func BenchmarkLookUpStringRandom(b *testing.B) {
-	rx := New(false)
-	insertData(rx, sampleData2)
-	sd2 := sampleData2()
-
-	for i := 0; i < b.N; i++ {
-		rx.LookUp(randomString(sd2))
-	}
-}
-
-func BenchmarkLookUpBytesSingle(b *testing.B) {
+func BenchmarkLookUpNTS(b *testing.B) {
 	rx := New(false)
 	insertDataBytes(rx, sampleData3)
-
-	toLookUp := randomBytes(sampleData3())
+	sd3 := sampleData3()
 
 	for i := 0; i < b.N; i++ {
-		rx.LookUpBytes(toLookUp)
+		rx.LookUpBytes(randomBytes(sd3))
 	}
 }
 
-func BenchmarkLookUpBytesRandom(b *testing.B) {
-	rx := New(false)
+func BenchmarkLookUpTS(b *testing.B) {
+	rx := New(true)
 	insertDataBytes(rx, sampleData3)
 	sd3 := sampleData3()
 
