@@ -80,6 +80,9 @@ func (r *Radix) InsertBytes(bs []byte, val ...interface{}) bool {
 
 			return prs
 		}
+		if v != bs[i] && match == 0 {
+			break
+		}
 	}
 
 	if match > 0 {
