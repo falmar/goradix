@@ -12,7 +12,6 @@ func TestInsert(t *testing.T) {
 
 	expectedBytes := []byte("test")
 	expectedValue := 1
-	expectedLeaf := true
 
 	for i, v := range radix.Path {
 		if v != expectedBytes[i] {
@@ -24,8 +23,8 @@ func TestInsert(t *testing.T) {
 		t.Fatalf("Expected value: %v; got: %v", radix.get(), expectedValue)
 	}
 
-	if radix.leaf != expectedLeaf {
-		t.Fatalf("Expected leaf: %v; got: %v", expectedLeaf, radix.leaf)
+	if !radix.leaf {
+		t.Fatalf("Expected leaf: %v; got: %v", true, radix.leaf)
 	}
 }
 
