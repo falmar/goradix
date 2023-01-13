@@ -9,8 +9,8 @@ import (
 	"sync"
 )
 
-// ErrNoMatchFound self explanatory
-var ErrNoMatchFound = errors.New("No Match Found")
+// ErrNoMatchFound self-explanatory
+var ErrNoMatchFound = errors.New("no match found")
 
 // Radix Radix
 type Radix struct {

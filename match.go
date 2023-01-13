@@ -6,7 +6,7 @@ package goradix
 
 // ----------------------- Match ------------------------ //
 
-func (r Radix) match(bs []byte) ([]byte, int, []byte) {
+func (r *Radix) match(bs []byte) ([]byte, int, []byte) {
 	var i int
 	var v byte
 	var matches int
