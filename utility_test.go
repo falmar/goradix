@@ -51,7 +51,7 @@ func sampleData2() []string {
 }
 
 // same as sampleData2 but in bytes to avoid conversion
-func sampleData3() [][]byte {
+func sampleData2Bytes() [][]byte {
 	return [][]byte{
 		[]byte{114, 111, 109, 97, 110, 101},
 		[]byte{114, 111, 109, 97, 110, 117, 115},

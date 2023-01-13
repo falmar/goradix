@@ -30,8 +30,8 @@ func BenchmarkAutocompleteStringFullWords(b *testing.B) {
 
 func BenchmarkAutocompleteBytesLeftWords(b *testing.B) {
 	rx := New(false)
-	insertDataBytes(rx, sampleData3)
-	sd3 := sampleData3()
+	insertDataBytes(rx, sampleData2Bytes)
+	sd3 := sampleData2Bytes()
 
 	for i := 0; i < b.N; i++ {
 		rx.AutoCompleteBytes(randomBytes(sd3), false)
@@ -40,8 +40,8 @@ func BenchmarkAutocompleteBytesLeftWords(b *testing.B) {
 
 func BenchmarkAutocompleteBytesFullWords(b *testing.B) {
 	rx := New(false)
-	insertDataBytes(rx, sampleData3)
-	sd3 := sampleData3()
+	insertDataBytes(rx, sampleData2Bytes)
+	sd3 := sampleData2Bytes()
 
 	for i := 0; i < b.N; i++ {
 		rx.AutoCompleteBytes(randomBytes(sd3), true)

@@ -10,8 +10,8 @@ import "testing"
 
 func BenchmarkLookUpNTS(b *testing.B) {
 	rx := New(false)
-	insertDataBytes(rx, sampleData3)
-	sd3 := sampleData3()
+	insertDataBytes(rx, sampleData2Bytes)
+	sd3 := sampleData2Bytes()
 
 	for i := 0; i < b.N; i++ {
 		rx.LookUpBytes(randomBytes(sd3))
@@ -20,8 +20,8 @@ func BenchmarkLookUpNTS(b *testing.B) {
 
 func BenchmarkLookUpTS(b *testing.B) {
 	rx := New(true)
-	insertDataBytes(rx, sampleData3)
-	sd3 := sampleData3()
+	insertDataBytes(rx, sampleData2Bytes)
+	sd3 := sampleData2Bytes()
 
 	for i := 0; i < b.N; i++ {
 		rx.LookUpBytes(randomBytes(sd3))

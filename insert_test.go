@@ -12,7 +12,6 @@ func TestInsert(t *testing.T) {
 
 	expectedBytes := []byte("test")
 	expectedValue := 1
-	expectedLeaf := true
 
 	for i, v := range radix.Path {
 		if v != expectedBytes[i] {
@@ -24,8 +23,8 @@ func TestInsert(t *testing.T) {
 		t.Fatalf("Expected value: %v; got: %v", radix.get(), expectedValue)
 	}
 
-	if radix.leaf != expectedLeaf {
-		t.Fatalf("Expected leaf: %v; got: %v", expectedLeaf, radix.leaf)
+	if !radix.leaf {
+		t.Fatalf("Expected leaf: %v; got: %v", true, radix.leaf)
 	}
 }
 
@@ -137,6 +136,31 @@ func TestInsertSeparationComplex(t *testing.T) {
 	if radix.Path != nil {
 		t.Fail()
 		t.Logf("Expected: %v; got: %v", nil, radix.Path)
+	}
+
+	checkNodes(t, radix.nodes, expectedTexts, expectedValues, expectedKeys, expectedLeaves, 0)
+}
+
+func TestInsertFirstMatchingLetter(t *testing.T) {
+	radix := New(false)
+	radix.Insert("roma", "value1")
+	radix.Insert("romb", "value2")
+	radix.Insert("abc", "value3")
+
+	expectedTexts := [][]byte{
+		[]byte("rom"),
+		[]byte("a"),
+		[]byte("b"),
+		[]byte("abc"),
+	}
+	expectedValues := []interface{}{
+		nil, "value1", "value2", "value3",
+	}
+	expectedKeys := []bool{
+		false, true, true, true,
+	}
+	expectedLeaves := []bool{
+		false, true, true, true,
 	}
 
 	checkNodes(t, radix.nodes, expectedTexts, expectedValues, expectedKeys, expectedLeaves, 0)

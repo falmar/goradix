@@ -11,7 +11,7 @@ import "testing"
 func BenchmarkInsertNTS(b *testing.B) {
 	rx := New(false)
 	tn := 0
-	sd2 := sampleData3()
+	sd2 := sampleData2Bytes()
 	sdLen := len(sd2) - 1
 
 	for i := 0; i < b.N; i++ {
@@ -29,7 +29,7 @@ func BenchmarkInsertNTS(b *testing.B) {
 func BenchmarkInsertTS(b *testing.B) {
 	rx := New(true)
 	tn := 0
-	sd2 := sampleData3()
+	sd2 := sampleData2Bytes()
 	sdLen := len(sd2) - 1
 
 	for i := 0; i < b.N; i++ {
