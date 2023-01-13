@@ -141,3 +141,28 @@ func TestInsertSeparationComplex(t *testing.T) {
 
 	checkNodes(t, radix.nodes, expectedTexts, expectedValues, expectedKeys, expectedLeaves, 0)
 }
+
+func TestInsertFirstMatchingLetter(t *testing.T) {
+	radix := New(false)
+	radix.Insert("roma", "value1")
+	radix.Insert("romb", "value2")
+	radix.Insert("abc", "value3")
+
+	expectedTexts := [][]byte{
+		[]byte("rom"),
+		[]byte("a"),
+		[]byte("b"),
+		[]byte("abc"),
+	}
+	expectedValues := []interface{}{
+		nil, "value1", "value2", "value3",
+	}
+	expectedKeys := []bool{
+		false, true, true, true,
+	}
+	expectedLeaves := []bool{
+		false, true, true, true,
+	}
+
+	checkNodes(t, radix.nodes, expectedTexts, expectedValues, expectedKeys, expectedLeaves, 0)
+}
