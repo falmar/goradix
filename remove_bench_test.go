@@ -10,15 +10,15 @@ import "testing"
 
 func BenchmarkRemoveNTS(b *testing.B) {
 	rx := New(false)
-	insertDataBytes(rx, sampleData3)
-	sd3 := sampleData3()
+	insertDataBytes(rx, sampleData2Bytes)
+	sd3 := sampleData2Bytes()
 	sdLen := len(sd3)
 	tn := 0
 
 	for i := 0; i < b.N; i++ {
 		if tn == sdLen {
 			rx = New(false)
-			insertDataBytes(rx, sampleData3)
+			insertDataBytes(rx, sampleData2Bytes)
 		}
 
 		rx.RemoveBytes(randomBytes(sd3))
@@ -29,15 +29,15 @@ func BenchmarkRemoveNTS(b *testing.B) {
 
 func BenchmarkRemoveTS(b *testing.B) {
 	rx := New(true)
-	insertDataBytes(rx, sampleData3)
-	sd3 := sampleData3()
+	insertDataBytes(rx, sampleData2Bytes)
+	sd3 := sampleData2Bytes()
 	sdLen := len(sd3)
 	tn := 0
 
 	for i := 0; i < b.N; i++ {
 		if tn == sdLen {
 			rx = New(true)
-			insertDataBytes(rx, sampleData3)
+			insertDataBytes(rx, sampleData2Bytes)
 		}
 
 		rx.RemoveBytes(randomBytes(sd3))
