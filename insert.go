@@ -122,41 +122,39 @@ func (r *Radix) InsertBytes(bs []byte, val ...interface{}) bool {
 		return true
 	}
 
-	if r.master {
-		// If there is NO match and the current node is the master Radix
+	// If there is NO match and the current node is not the master node, leave
+	if !r.master {
+		r.rUnlock()
+		return false
+	}
 
-		if r.Path != nil {
-			r.rUnlock()
-			r.lock()
-
-			prs := r.pushChildren(bs, value, i, true)
-
-			r.unlock()
-
-			return prs
-		}
-
+	if r.Path != nil {
 		r.rUnlock()
 		r.lock()
 
-		for _, c := range r.nodes {
-			if c.InsertBytes(bs, value) {
-				r.unlock()
-				return true
-			}
-		}
-
-		// no match found on children nodes
-		// add new byte string as node
-		r.addChildren(bs, value, nil, true)
+		prs := r.pushChildren(bs, value, i, true)
 
 		r.unlock()
-		return true
+
+		return prs
 	}
 
 	r.rUnlock()
+	r.lock()
 
-	return false
+	for _, c := range r.nodes {
+		if c.InsertBytes(bs, value) {
+			r.unlock()
+			return true
+		}
+	}
+
+	// no match found on children nodes
+	// add new byte string as node
+	r.addChildren(bs, value, nil, true)
+
+	r.unlock()
+	return true
 }
 
 // Add children node to the current Radix Tree node
