@@ -81,6 +81,7 @@ func (r *Radix) InsertBytes(bs []byte, val ...interface{}) bool {
 			return prs
 		}
 		if v != bs[i] && match == 0 {
+			// If the byte string does not match the path at the start stop looking
 			break
 		}
 	}
